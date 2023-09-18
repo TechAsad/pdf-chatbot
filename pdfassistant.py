@@ -11,7 +11,7 @@ from langchain.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.chains.question_answering import load_qa_chain
-
+#OPENAI_API_KEY = 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
 
 # Set your Google API key
 import os
@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key1 = os.getenv("GOOGLE_API_KEY")
+api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = os.getenv("OPENAI_API_KEY")
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
