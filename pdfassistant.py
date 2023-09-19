@@ -92,8 +92,6 @@ if uploaded_file is not None:
     if prompt := st.chat_input(placeholder="Ask?"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-
-        print(st.session_state.messages)
     
         memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "", ai_prefix= "")
 
