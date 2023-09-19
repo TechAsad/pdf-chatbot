@@ -107,7 +107,7 @@ if uploaded_file is not None:
                 next_content = next_message["content"]
                 
                 # Concatenate role and content for context and output
-                context = f"{current_role}-replied: {current_content}\n{next_role}-asked: {next_content}"
+                context = f"{current_role}: {current_content}\n{next_role}-said: {next_content}"
                 
                 memory.save_context({"question": context}, {"output": ""})
 
@@ -118,8 +118,8 @@ if uploaded_file is not None:
                 Use the following pieces of context to answer the question at the end. Your answer should be less than 30 words.\
                 If you don't know the answer, just say that you don't know.\
                 this is the context: {context}\
-                This is chat history: {chat_history}\
-                This is the Question: {question}\
+                This is chat history between you and user: {chat_history}\
+                Question: {question}\
                 Answer: "
 
 
