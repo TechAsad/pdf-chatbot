@@ -70,7 +70,7 @@ def process_pdf(uploaded_file):
 
 with st.sidebar:
     uploaded_file =  st.file_uploader("Upload your file",
-    help="Various File formats are Support",
+    help="Only PDFs are Supported",
     on_change=clear_submit,
     type=['pdf'])
 
