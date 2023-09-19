@@ -11,7 +11,7 @@ from langchain.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.chains.question_answering import load_qa_chain
-#OPENAI_API_KEY = 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
+
 
 # Set your Google API key
 import os
