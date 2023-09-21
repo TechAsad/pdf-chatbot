@@ -100,7 +100,7 @@ def process_pdf(uploaded_file):
         # Split the text using Character Text Splitter
         text_splitter = CharacterTextSplitter(
             separator="\n",
-            chunk_size=1000,
+            chunk_size=1500,
             chunk_overlap=200,
             length_function=len,
         )
@@ -185,7 +185,7 @@ if uploaded_file and s == 'pdf/docx':
         )
 
          # Run the question-answering chain
-        docs = document_search.similarity_search(prompt, kwargs=1)
+        docs = document_search.similarity_search(prompt, kwargs=3)
 
             # Load question-answering chain
         chain = load_qa_chain(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
