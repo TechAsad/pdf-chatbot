@@ -29,7 +29,7 @@ api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = GooglePalm(temperature=1, streaming=True)
+llm = GooglePalm(temperature=0.4, streaming=True)
 
 def clear_submit():
     """
@@ -298,11 +298,11 @@ if option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r"""
-            -You are data analyst and a helpful assistant. You have been provided with information of companies.
-            -chat humbly, and answer honestly. Answer the question from provided data only.
+            -You are a data analyst and a helpful assistant. You have been provided with CSV containing performance information of different companies.
+            -chat humbly, and answer honestly. Answer the question from the provided data only.
             -Use the following pieces of context to answer the question at the end. Your answer should be less than 20 words.
             -If you don't know the answer, just say that you don't know, do not make up any answer.
-            -Following is the relevant data:
+            -Following is the relevant data retrieved from large csv:
             ----
 
             {context}
@@ -315,7 +315,7 @@ if option == 'Large Size Pdf/Dcx and Csv':
             {chat_history}
             ------
 
-            Your Answer: 
+            Answer: 
 
             """
             general_user_template ="``{question}``"
