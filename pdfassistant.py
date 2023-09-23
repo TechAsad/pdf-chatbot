@@ -60,8 +60,10 @@ st.set_page_config(page_title="Document ChatBot", page_icon="books")
 st.title("Chat with your Documents")
 
 with st.sidebar:
-    option= st.select_slider('Choose the Small or Large data Bot. Left side only works with Pdf and Docx.' ,options = ['Small Size Pdf/Docx', 'Large Size Pdf/Dcx and Csv'])
-
+    #option= st.select_slider('Choose the Small or Large data Bot. Left side only works with Pdf and Docx.' ,options = ['Small Size Pdf/Docx', 'Large Size Pdf/Dcx and Csv'])
+    st.subheader("Please Choose Between")
+    use_small= st.checkbox("Small Pdf/Docx <10MB")
+    use_large= st.checkbox("Lrage Pdf/Docx and Csv")
 
 @st.cache_resource()
 def process_pdf(uploaded_file):
@@ -121,7 +123,8 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 
 ########--Main PDF--########
 
-if option == 'Small Size Pdf/Docx':
+if use_small:# option == 'Small Size Pdf/Docx':
+    use_large = False
      
 
         #s= st.select_slider('Choose Pdf/docx or csv bot. Please delete csv before using pdf/docx',options = ['pdf/docx', 'csv'])
@@ -261,7 +264,8 @@ def process_csv(uploaded_file2):
 ########--Main CSV--########
 
 
-if option == 'Large Size Pdf/Dcx and Csv':
+if use_large: #option == 'Large Size Pdf/Dcx and Csv':
+    use_small = False
 
     uploaded_file2 = uploaded_file
     
