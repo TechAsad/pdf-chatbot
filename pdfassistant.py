@@ -69,7 +69,7 @@ api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = GooglePalm(temperature=0.5, max_output_tokens= 256,verbose=True,streaming=True)
+llm = ChatGooglePalm(temperature=0.6, max_output_tokens= 1024 ,verbose=True,streaming=True)
 #llm = OpenAI(temperature=0.9,verbose=True)
 
 def clear_submit():
@@ -262,7 +262,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path1 = tmp_file1.name
                 loader = PyPDFLoader(file_path=tmp_file_path1)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
                 data += text_splitter.split_documents(documents)
 
 
@@ -276,7 +276,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                             'delimiter': ','})
                 documents = loader.load()
                 
-                text_splitter = CharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     
                 data += text_splitter.split_documents(documents)
                 st.sidebar.header(f"Data-{file.name}")
@@ -290,7 +290,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path = tmp_file.name
                 loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
                 data += text_splitter.split_documents(documents)
             
@@ -346,26 +346,40 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r""" 
-            -You are data analyst and a helpful assistant. You have been provided with information of companies.
-            -chat humbly, and answer honestly. Answer the question from provided data only, do not make up any answer outside the provided data.
-            -Use the following pieces of context to answer the question at the end. 
-            -Your answer should not exceed 15 words.
-            - Do not write "Assistant" in response
-            -SEK and DKK are currencies.
+-You are data analyst and a helpful assistant. You have been provided with information of companies. and description in swedish langauge.
+-chat humbly, and answer honestly. Answer the question from provided data only, do not make up any answer outside the provided data.
+-Use the following pieces of context to answer the question at the end. 
+-Your answer should not exceed 20 words.
+-SEK and DKK are currencies.
 
-            -If you don't know the answer, just say I don't know. Do not make up any answer.
-            
-            Example1 :
+-If you don't know the answer, just say I don't know. Do not make up any answer.
 
-            Human: What are the number of sales for A and B company in 2020?
+Example1 :
 
-            Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
+Human: What are the number of sales for A and B company in 2020?
 
-            Example 2:
+Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
 
-            Human: sales and net profit of alcadon in 2020?
+Example 2:
 
-            Assistant: Sales:467600, Net profit:29000
+Human: sales and net profit of alcadon in 2020?
+
+Assistant: Sales:467600, Net profit:29000
+
+Example 3: 
+
+Data: 			ceo	chairman	description
+Name: Sinch	Country: SE Url:	https://investors.sinch.com/	ceo: Laurinda Pang	chairman: Erik Fröberg	description: Sinch är ett teknikbolag. Bolaget erbjuder molnbaserade kommunikationstjänster som gör att kunderna kan integrera meddelande (SMS)-
+Name: Provide IT Sweden	Country: SE	 Url: https://www.provideit.se/	ceo: Bawan Faraj	chairman: Torvald Thedéen	description: Provide IT Sweden är verksamma inom IT-sektorn. Bolaget tillhandahåller kompetens inom webb- och systemutveckling. Verksamheten består utav två affärsområden med två skilda varumärken. Consulting är bolagets största affärsområde och innebär uthyrning av framförallt seniora systemutvecklare som konsulter. Den digitala byrån tillhandahåller strategi
+
+Human: who is the ceo of Provide IT Sweden?
+Assistant: Bawan Faraj
+
+Human: Which company provides IT services?
+Assitant: Provide IT Sweden company provides IT services
+
+
+
 
             -Following is the relevant data:
             ----
@@ -426,13 +440,13 @@ Sure, here is the rephrased standalone question: Human:
             general_user_template2 ="``{question}``"
             qa_prompt2 = ChatPromptTemplate.from_template( general_system_template2 )
 
-            llm2 = GooglePalm(temperature=0.5, verbose=True)
+            llm2 = GooglePalm(temperature=0.9, verbose=True)
 
 
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
-            llm2 , verbose= True, memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 20}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            llm , verbose= True, memory = memory, 
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=2000#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
  ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
