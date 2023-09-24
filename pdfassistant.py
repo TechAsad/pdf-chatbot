@@ -485,7 +485,7 @@ Sure, here is the rephrased standalone question: Human:
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
             llm , memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 6}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
  ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
