@@ -69,7 +69,7 @@ api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = ChatGooglePalm(temperature=0.6, max_output_tokens= 1024 ,verbose=True,streaming=True)
+llm = ChatGooglePalm(temperature=0.8, max_output_tokens= 512 ,verbose=True,streaming=True)
 #llm = OpenAI(temperature=0.9,verbose=True)
 
 def clear_submit():
@@ -262,7 +262,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path1 = tmp_file1.name
                 loader = PyPDFLoader(file_path=tmp_file_path1)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
                 data += text_splitter.split_documents(documents)
 
 
@@ -276,7 +276,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                             'delimiter': ','})
                 documents = loader.load()
                 
-                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=2048, chunk_overlap=200)
     
                 data += text_splitter.split_documents(documents)
                 st.sidebar.header(f"Data-{file.name}")
@@ -290,7 +290,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path = tmp_file.name
                 loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
                 data += text_splitter.split_documents(documents)
             
@@ -346,13 +346,13 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r""" 
--You are data analyst and a helpful assistant. You have been provided with information of companies. and description in swedish langauge.
--chat humbly, and answer honestly. Answer the question from provided data only, do not make up any answer outside the provided data.
--Use the following pieces of context to answer the question at the end. 
+-You are a helpful assistant. You have been provided with information of companies. and description in Swedish langauge.
+-Answer the question from provided data, do not make up any answer.
+-Use the following pieces of data to answer the question at the end. 
 -Your answer should not exceed 20 words.
--SEK and DKK are currencies.
+-SEK and DKK are Currencies.
 
--If you don't know the answer, just say I don't know. Do not make up any answer.
+-If you don't find the answer, just say I don't know. Do not make up any answer.
 
 Example1 :
 
@@ -362,9 +362,49 @@ Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
 
 Example 2:
 
-Human: sales and net profit of alcadon in 2020?
+Data:
 
-Assistant: Sales:467600, Net profit:29000
+Name: AGF
+
+Year: 2021
+
+currency: DKK
+
+from date: 01/07/2020
+
+end date: 30/06/2021
+
+sales: 143770
+
+net profit: 25320
+
+pre-tax profit: 24820
+
+ebit: 19950
+
+shares: 328621000
+
+shareholders equity: 93630
+
+dividend: 0
+
+current assets: 105690
+
+total cash flow: 3080
+
+cash: 29350
+
+arrival date: 22/09/2021
+
+
+
+Human: sales of AGF in 2020
+
+Assistant: Sales of AGf in 2020 are 467600
+
+Human: What is the net profit of AGf in 2021
+
+Assistant: Net profit of AGF in 2021 is 25320 DDK
 
 Example 3: 
 
@@ -377,7 +417,6 @@ Assistant: Bawan Faraj
 
 Human: Which company provides IT services?
 Assitant: Provide IT Sweden company provides IT services
-
 
 
 
@@ -440,7 +479,7 @@ Sure, here is the rephrased standalone question: Human:
             general_user_template2 ="``{question}``"
             qa_prompt2 = ChatPromptTemplate.from_template( general_system_template2 )
 
-            llm2 = GooglePalm(temperature=0.9, verbose=True)
+            #llm2 = ChatGooglePalm(temperature=0.8, verbose=True)
 
 
                 # Load question-answering chain
