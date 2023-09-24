@@ -65,12 +65,12 @@ def sidebar_bg(side_bg):
 sidebar_bg("bg.png")
 
 
-api_key1 = st.secrets["GOOGLE_API_KEY"]
-#api_key2 = st.secrets["OPENAI_API_KEY"]
-os.environ["GOOGLE_API_KEY"] = api_key1
-#os.environ["OPENAI_API_KEY"] = api_key2
-llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
-#llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
+#api_key1 = st.secrets["GOOGLE_API_KEY"]
+api_key2 = st.secrets["OPENAI_API_KEY"]
+#os.environ["GOOGLE_API_KEY"] = api_key1
+os.environ["OPENAI_API_KEY"] = api_key2
+#llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
+llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
 
 def clear_submit():
     """
@@ -485,7 +485,7 @@ Sure, here is the rephrased standalone question: Human:
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
             llm , memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 10}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
  ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
