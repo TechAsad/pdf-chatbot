@@ -65,12 +65,12 @@ def sidebar_bg(side_bg):
 sidebar_bg("bg.png")
 
 
-#api_key1 = st.secrets["GOOGLE_API_KEY"]
+api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
-#os.environ["GOOGLE_API_KEY"] = api_key1
-os.environ["OPENAI_API_KEY"] = "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"
-#llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
-llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
+os.environ["GOOGLE_API_KEY"] = api_key1
+#os.environ["OPENAI_API_KEY"] = api_key2
+llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
+#llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
 
 def clear_submit():
     """
