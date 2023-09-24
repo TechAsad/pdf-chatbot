@@ -262,7 +262,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path1 = tmp_file1.name
                 loader = PyPDFLoader(file_path=tmp_file_path1)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=10)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
                 data += text_splitter.split_documents(documents)
 
 
@@ -276,7 +276,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                             'delimiter': ','})
                 documents = loader.load()
                 
-                text_splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=10)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     
                 data += text_splitter.split_documents(documents)
                 st.sidebar.header(f"Data-{file.name}")
@@ -290,7 +290,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path = tmp_file.name
                 loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=10)
+                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
                 data += text_splitter.split_documents(documents)
             
@@ -432,7 +432,7 @@ Sure, here is the rephrased standalone question: Human:
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
             llm , verbose= True, memory = memory, 
-            retriever=vectorstore.as_retriever(), max_tokens_limit=512#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=4000#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
  ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
