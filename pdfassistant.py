@@ -493,10 +493,10 @@ Sure, here is the rephrased standalone question: Human:
             
 
             with st.chat_message("assistant"):
-                st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=True)
+                st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
             
                 response = chain({"question": prompt,   
-                                        "chat_history": st.session_state['history']}, callbacks=[st_cb])
+                                        "chat_history": st.session_state['history']})#, callbacks=[st_cb])
                 st.session_state.messages.append({"role": "Assistant", "content": response['answer']})
                 st.session_state['history'].append((prompt, response["answer"])) 
                 st.write(response['answer'])
