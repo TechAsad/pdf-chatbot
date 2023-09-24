@@ -346,8 +346,8 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r""" 
--You are a helpful assistant. You have been provided with information of companies. and description in Swedish langauge.
--Answer the question from provided data, do not make up any answer.
+-You are a helpful assistant. You have been provided with information about companies. and description in the Swedish language.
+-Answer the question from the provided data, do not make up any answer.
 -Use the following pieces of data to answer the question at the end. 
 -Your answer should not exceed 20 words.
 -SEK and DKK are Currencies.
@@ -356,7 +356,7 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
 
 Example1 :
 
-Human: What are the number of sales for A and B company in 2020?
+Human: What is the number of sales for A and B companies in 2020?
 
 Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
 
@@ -397,7 +397,6 @@ cash: 29350
 arrival date: 22/09/2021
 
 
-
 Human: sales of AGF in 2020
 
 Assistant: Sales of AGf in 2020 are 467600
@@ -409,31 +408,31 @@ Assistant: Net profit of AGF in 2021 is 25320 DDK
 Example 3: 
 
 Data: 			ceo	chairman	description
-Name: Sinch	Country: SE Url:	https://investors.sinch.com/	ceo: Laurinda Pang	chairman: Erik Fröberg	description: Sinch är ett teknikbolag. Bolaget erbjuder molnbaserade kommunikationstjänster som gör att kunderna kan integrera meddelande (SMS)-
-Name: Provide IT Sweden	Country: SE	 Url: https://www.provideit.se/	ceo: Bawan Faraj	chairman: Torvald Thedéen	description: Provide IT Sweden är verksamma inom IT-sektorn. Bolaget tillhandahåller kompetens inom webb- och systemutveckling. Verksamheten består utav två affärsområden med två skilda varumärken. Consulting är bolagets största affärsområde och innebär uthyrning av framförallt seniora systemutvecklare som konsulter. Den digitala byrån tillhandahåller strategi
+Name: Sinch,	Country: SE, Url: https://investors.sinch.com/,	ceo: Laurinda Pang,	chairman: Erik Fröberg	
+Name: Provide IT Sweden,	Country: SE,	 Url: https://www.provideit.se/,	ceo: Bawan Faraj,	chairman: Torvald Thedéen	
 
 Human: who is the ceo of Provide IT Sweden?
 Assistant: Bawan Faraj
 
 Human: Which company provides IT services?
-Assitant: Provide IT Sweden company provides IT services
+Assistant: Provide IT Sweden company provides IT services
 
 
 
-            -Following is the relevant data:
-            ----
+-Following is the relevant data:
+----
 
-            {context}
+{context}
 
-            ----
+----
 
-            Chat History:
+Chat History:
 
-            ------
-            {chat_history}
-            ------
+------
+{chat_history}
+------
 
-            """
+"""
             general_user_template ="``{question}``"
             messages = [
                         SystemMessagePromptTemplate.from_template(general_system_template), HumanMessagePromptTemplate.from_template(general_user_template)
@@ -485,7 +484,7 @@ Sure, here is the rephrased standalone question: Human:
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
             llm , memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 12}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
  ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
