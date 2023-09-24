@@ -346,7 +346,7 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r""" 
--You are a helpful assistant. You have been provided with information about companies. and description in the Swedish language.
+-You are a helpful assistant. You have been provided with information about companies.
 -Answer the question from the provided data, do not make up any answer.
 -Use the following pieces of data to answer the question at the end. 
 -Your answer should not exceed 20 words.
@@ -362,41 +362,6 @@ Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
 
 Example 2:
 
-Data:
-
-Name: AGF
-
-Year: 2021
-
-currency: DKK
-
-from date: 01/07/2020
-
-end date: 30/06/2021
-
-sales: 143770
-
-net profit: 25320
-
-pre-tax profit: 24820
-
-ebit: 19950
-
-shares: 328621000
-
-shareholders equity: 93630
-
-dividend: 0
-
-current assets: 105690
-
-total cash flow: 3080
-
-cash: 29350
-
-arrival date: 22/09/2021
-
-
 Human: sales of AGF in 2020
 
 Assistant: Sales of AGf in 2020 are 467600
@@ -407,7 +372,7 @@ Assistant: Net profit of AGF in 2021 is 25320 DDK
 
 Example 3: 
 
-Data: 			ceo	chairman	description
+Data: 
 Name: Sinch,	Country: SE, Url: https://investors.sinch.com/,	ceo: Laurinda Pang,	chairman: Erik Fröberg	
 Name: Provide IT Sweden,	Country: SE,	 Url: https://www.provideit.se/,	ceo: Bawan Faraj,	chairman: Torvald Thedéen	
 
@@ -417,9 +382,7 @@ Assistant: Bawan Faraj
 Human: Which company provides IT services?
 Assistant: Provide IT Sweden company provides IT services
 
-
-
--Following is the relevant data:
+data:
 ----
 
 {context}
@@ -431,7 +394,7 @@ Chat History:
 ------
 {chat_history}
 ------
-
+Assistant:
 """
             general_user_template ="``{question}``"
             messages = [
