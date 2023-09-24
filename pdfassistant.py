@@ -262,7 +262,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path1 = tmp_file1.name
                 loader = PyPDFLoader(file_path=tmp_file_path1)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
                 data += text_splitter.split_documents(documents)
 
 
@@ -276,7 +276,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                             'delimiter': ','})
                 documents = loader.load()
                 
-                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
     
                 data += text_splitter.split_documents(documents)
                 st.sidebar.header(f"Data-{file.name}")
@@ -290,7 +290,7 @@ def processing_csv_pdf_docx(uploaded_file2):
                 tmp_file_path = tmp_file.name
                 loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
                 documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
 
                 data += text_splitter.split_documents(documents)
             
