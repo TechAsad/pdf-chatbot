@@ -69,7 +69,7 @@ api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = ChatGooglePalm(temperature=0.8, max_output_tokens= 1024)
+llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
 #llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
 
 def clear_submit():
