@@ -22,63 +22,13 @@ from langchain.chains.question_answering import load_qa_chain
 import os
 
 
-import base64
-def add_bg_from_local(image_file):
-    with open(image_file, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
-    
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image: url(data:image/png;base64,{encoded_string.decode()});
-            background-size: cover;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    
-st.set_page_config(
-    page_title="Pdf/Docx/Csv Chat Bot",
-    page_icon=":books:",
-)
-
-add_bg_from_local('bg2.jpg') 
- 
-
-def sidebar_bg(side_bg):
-
-   side_bg_ext = 'png'
-
-   st.markdown(
-      f"""
-      <style>
-      [data-testid="stSidebar"] > div:first-child {{
-          background: url(data:image/{side_bg_ext};base64,{base64.b64encode(open(side_bg, "rb").read()).decode()});
-      }}
-      </style>
-      """,
-      unsafe_allow_html=True,
-      )
-   
-sidebar_bg("bg.png")
-
 
 api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = GooglePalm(temperature=0.8, max_output_tokens= 1024)
-#llm = OpenAI(temperature=0.9,verbose=True, streaming = True)
-
-def clear_submit():
-    """
-    Clear the Submit Button State
-    Returns:
-
-    """
-    st.session_state["submit"] = False
+llm = ChatGooglePalm(temperature=0.8, max_output_tokens= 512 ,verbose=True,streaming=True)
+#llm = OpenAI(temperature=0.9,verbose=True)
 
 
 def get_docx_text(file):
@@ -91,13 +41,10 @@ def get_docx_text(file):
 
     
 def get_csv_text(file):
-    return "If there is nothing below, just Say: 'Choose Right Side Bot for Csv'\n"
+    return "Empty"
 
 
-
-
-# Streamlit UI
-#st.set_page_config(page_title="Document ChatBot", page_icon="books")
+st.set_page_config(page_title="Document ChatBot", page_icon="books")
 st.title("Chat with your Documents")
 
 with st.sidebar:
@@ -106,47 +53,47 @@ with st.sidebar:
     use_small= st.checkbox("Small Pdf/Docx <10MB")
     use_large= st.checkbox("Lrage Pdf/Docx and Csv")
 
-@st.cache_resource()
+@st.cache_resource(show_spinner=False)
 def processing_pdf_docx(uploaded_file):
+    with st.spinner(text="Getting Ready"):
     # Read text from the uploaded PDF file
 
-    raw_text = '->\n'
-    for file in uploaded_file:
-        split_tup = os.path.splitext(file.name)
-        file_extension = split_tup[1]
-        if file_extension == ".pdf":
-            pdfreader = PdfReader(file)
-            raw_text += ''.join(page.extract_text() for page in pdfreader.pages if page.extract_text())
-                
-        elif file_extension == ".docx":
-            raw_text += get_docx_text(file)
-        else:
-            raw_text += get_csv_text(file)
+        raw_text = '->\n'
+        for file in uploaded_file:
+            split_tup = os.path.splitext(file.name)
+            file_extension = split_tup[1]
+            if file_extension == ".pdf":
+                pdfreader = PdfReader(file)
+                raw_text += ''.join(page.extract_text() for page in pdfreader.pages if page.extract_text())
+                    
+            elif file_extension == ".docx":
+                raw_text += get_docx_text(file)
+            else:
+                raw_text += get_csv_text(file)
 
-    # Split the text using Character Text Splitter
-    text_splitter = CharacterTextSplitter(
-        separator="\n",
-        chunk_size=2000,
-        chunk_overlap=200,
-        length_function=len,
-    )
-    texts = text_splitter.split_text(raw_text)
+        # Split the text using Character Text Splitter
+        text_splitter = CharacterTextSplitter(
+            separator="\n",
+            chunk_size=2000,
+            chunk_overlap=200,
+            length_function=len,
+        )
+        texts = text_splitter.split_text(raw_text)
 
-    # Download embeddings from GooglePalm
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    #embeddings = GooglePalmEmbeddings()
-    #embeddings = OpenAIEmbeddings()
+        # Download embeddings from GooglePalm
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        #embeddings = GooglePalmEmbeddings()
+        #embeddings = OpenAIEmbeddings()
 
-    # Create a FAISS index from texts and embeddings
-    document_search = FAISS.from_texts(texts, embeddings)
+        # Create a FAISS index from texts and embeddings
+        document_search = FAISS.from_texts(texts, embeddings)
 
-    return document_search
+        return document_search
 
 
 with st.sidebar:
     uploaded_file =  st.file_uploader("Upload your files",
     help="Multiple Files are Supported",
-    on_change=clear_submit,
     type=['pdf', 'docx', 'csv'], accept_multiple_files= True)
 
 with st.sidebar:
@@ -173,8 +120,6 @@ if use_small:# option == 'Small Size Pdf/Docx':
 
     if uploaded_file is not None:
         
-
-            # Define a caching function for PDF processing
             
             document_search = processing_pdf_docx(uploaded_file)
 
@@ -231,7 +176,7 @@ if use_small:# option == 'Small Size Pdf/Docx':
                 )
 
                 # Run the question-answering chain
-                docs = document_search.similarity_search(prompt, kwargs=3)
+                docs = document_search.similarity_search(prompt, k=5)
 
                     # Load question-answering chain
                 chain = load_qa_chain(llm=llm, verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
@@ -247,63 +192,65 @@ if use_small:# option == 'Small Size Pdf/Docx':
                     st.write(response)
 
 
-@st.cache_resource()
+@st.cache_resource(show_spinner=False)
 def processing_csv_pdf_docx(uploaded_file2):
-    # Read text from the uploaded PDF file
-    data = []
-    for file in uploaded_file2:
-        split_tup = os.path.splitext(file.name)
-        file_extension = split_tup[1]
-    
-        if file_extension == ".pdf":
+    with st.spinner(text="Getting Ready"):
 
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file1:
-                tmp_file1.write(file.getvalue())
-                tmp_file_path1 = tmp_file1.name
-                loader = PyPDFLoader(file_path=tmp_file_path1)
-                documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
-                data += text_splitter.split_documents(documents)
-
-
-        if file_extension == ".csv":
-            
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                tmp_file.write(file.getvalue())
-                tmp_file_path = tmp_file.name
-
-                loader = CSVLoader(file_path=tmp_file_path, encoding="utf-8", csv_args={
-                            'delimiter': ','})
-                documents = loader.load()
-                
-                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
-    
-                data += text_splitter.split_documents(documents)
-                st.sidebar.header(f"Data-{file.name}")
-                data1 = pd.read_csv(tmp_file_path)
-                st.sidebar.dataframe(data1)
+        # Read text from the uploaded PDF file
+        data = []
+        for file in uploaded_file2:
+            split_tup = os.path.splitext(file.name)
+            file_extension = split_tup[1]
         
-        if file_extension == ".docx":
+            if file_extension == ".pdf":
 
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                tmp_file.write(file.getvalue())
-                tmp_file_path = tmp_file.name
-                loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
-                documents = loader.load()
-                text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+                with tempfile.NamedTemporaryFile(delete=False) as tmp_file1:
+                    tmp_file1.write(file.getvalue())
+                    tmp_file_path1 = tmp_file1.name
+                    loader = PyPDFLoader(file_path=tmp_file_path1)
+                    documents = loader.load()
+                    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                    data += text_splitter.split_documents(documents)
 
-                data += text_splitter.split_documents(documents)
+
+            if file_extension == ".csv":
+                
+                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                    tmp_file.write(file.getvalue())
+                    tmp_file_path = tmp_file.name
+
+                    loader = CSVLoader(file_path=tmp_file_path, encoding="utf-8", csv_args={
+                                'delimiter': ','})
+                    documents = loader.load()
+                    
+                    text_splitter = CharacterTextSplitter(chunk_size=2048, chunk_overlap=200)
+        
+                    data += text_splitter.split_documents(documents)
+                    st.sidebar.header(f"Data-{file.name}")
+                    data1 = pd.read_csv(tmp_file_path)
+                    st.sidebar.dataframe(data1)
             
+            if file_extension == ".docx":
 
-    # Download embeddings from GooglePalm
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    #embeddings = GooglePalmEmbeddings()
-    #embeddings = OpenAIEmbeddings()
+                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                    tmp_file.write(file.getvalue())
+                    tmp_file_path = tmp_file.name
+                    loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
+                    documents = loader.load()
+                    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
-    # Create a FAISS index from texts and embeddings
-    vectorstore = FAISS.from_documents(data, embeddings)
+                    data += text_splitter.split_documents(documents)
+                
 
-    return vectorstore
+        # Download embeddings from GooglePalm
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        #embeddings = GooglePalmEmbeddings()
+        #embeddings = OpenAIEmbeddings()
+
+        # Create a FAISS index from texts and embeddings
+        vectorstore = FAISS.from_documents(data, embeddings)
+
+        return vectorstore
 
 
 ########--Main CSV--########
@@ -317,7 +264,7 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
 
 
     if uploaded_file2:
-
+        
         vectorstore = processing_csv_pdf_docx(uploaded_file2)
 
         for msg in st.session_state.messages:
@@ -346,21 +293,57 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
                     memory.save_context({"question": context}, {"output": ""})
             
             general_system_template = r""" 
--You are a helpful assistant. You have been provided with information about companies.
--Answer the question from the provided data, do not make up any answer.
+-You are a helpful assistant. You have been provided with information of companies. and description in Swedish langauge.
+-Answer the question from provided data, do not make up any answer.
 -Use the following pieces of data to answer the question at the end. 
 -Your answer should not exceed 20 words.
 -SEK and DKK are Currencies.
 
 -If you don't find the answer, just say I don't know. Do not make up any answer.
-
+Answer like following examples:
 Example1 :
 
-Human: What is the number of sales for A and B companies in 2020?
+Human: What are the number of sales for A and B company in 2020?
 
 Assistant: The number of sale for A are 2458 and for B are 198 in 2020.
 
 Example 2:
+
+Data:
+
+Name: AGF
+
+Year: 2021
+
+currency: DKK
+
+from date: 01/07/2020
+
+end date: 30/06/2021
+
+sales: 143770
+
+net profit: 25320
+
+pre-tax profit: 24820
+
+ebit: 19950
+
+shares: 328621000
+
+shareholders equity: 93630
+
+dividend: 0
+
+current assets: 105690
+
+total cash flow: 3080
+
+cash: 29350
+
+arrival date: 22/09/2021
+
+
 
 Human: sales of AGF in 2020
 
@@ -372,17 +355,19 @@ Assistant: Net profit of AGF in 2021 is 25320 DDK
 
 Example 3: 
 
-Data: 
-Name: Sinch,	Country: SE, Url: https://investors.sinch.com/,	ceo: Laurinda Pang,	chairman: Erik Fröberg	
-Name: Provide IT Sweden,	Country: SE,	 Url: https://www.provideit.se/,	ceo: Bawan Faraj,	chairman: Torvald Thedéen	
+Data: 			ceo	chairman	description
+Name: Sinch	Country: SE Url:	https://investors.sinch.com/	ceo: Laurinda Pang	chairman: Erik Fröberg	description: Sinch är ett teknikbolag. Bolaget erbjuder molnbaserade kommunikationstjänster som gör att kunderna kan integrera meddelande (SMS)-
+Name: Provide IT Sweden	Country: SE	 Url: https://www.provideit.se/	ceo: Bawan Faraj	chairman: Torvald Thedéen	description: Provide IT Sweden är verksamma inom IT-sektorn. Bolaget tillhandahåller kompetens inom webb- och systemutveckling. Verksamheten består utav två affärsområden med två skilda varumärken. Consulting är bolagets största affärsområde och innebär uthyrning av framförallt seniora systemutvecklare som konsulter. Den digitala byrån tillhandahåller strategi
 
 Human: who is the ceo of Provide IT Sweden?
 Assistant: Bawan Faraj
 
 Human: Which company provides IT services?
-Assistant: Provide IT Sweden company provides IT services
+Assitant: Provide IT Sweden company provides IT services
 
-data:
+
+
+-Following is the relevant data:
 ----
 
 {context}
@@ -394,7 +379,7 @@ Chat History:
 ------
 {chat_history}
 ------
-Assistant:
+
 """
             general_user_template ="``{question}``"
             messages = [
@@ -404,7 +389,7 @@ Assistant:
 
 
             general_system_template2 = r""" 
-        Given the following conversation and a follow up question, only rephrase the follow up question a little to be a standalone question, in its original language...
+Given the following conversation and a follow up question, only rephrase the follow up question a little to be a standalone question, in its original language...
 
 Example1:
 Conversation:
@@ -430,14 +415,14 @@ User: Please list the top-performing products in terms of customer reviews.
 Wrong response: 
 Sure, here is the rephrased standalone question: Human:
 
-        Conversation:
+Conversation:
 
-        ------
-        {chat_history}
-        ------
-        Human: {question}
+------
+{chat_history}
+------
+Human: {question}
 
-        """
+"""
             general_user_template2 ="``{question}``"
             qa_prompt2 = ChatPromptTemplate.from_template( general_system_template2 )
 
@@ -446,31 +431,30 @@ Sure, here is the rephrased standalone question: Human:
 
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
-            llm , memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 12}), max_tokens_limit=2048#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
- ,combine_docs_chain_kwargs={'prompt':qa_prompt})
+            llm , verbose= True, memory = memory, 
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=1000#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
             #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
             
 
             with st.chat_message("assistant"):
-                st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-            
+                st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=True)
                 response = chain({"question": prompt,   
-                                        "chat_history": st.session_state['history']})#, callbacks=[st_cb])
+                                        "chat_history": st.session_state['history']}, callbacks=[st_cb])
                 st.session_state.messages.append({"role": "Assistant", "content": response['answer']})
                 st.session_state['history'].append((prompt, response["answer"])) 
                 st.write(response['answer'])
 
 
 
-#hide_streamlit_style = """
- #           <style>
-  #          #MainMenu {visibility: hidden;}
-   #         footer {visibility: hidden;}
-    #        </style>
-     #       """
-#st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
     
 
