@@ -193,12 +193,12 @@ if use_small:# option == 'Small Size Pdf/Docx':
 
 
 @st.cache_resource(show_spinner=False)
-def processing_csv_pdf_docx(uploaded_file2):
+def processing_csv_pdf_docx(uploaded_file):
     with st.spinner(text="Getting Ready"):
 
         # Read text from the uploaded PDF file
         data = []
-        for file in uploaded_file2:
+        for file in uploaded_file:
             split_tup = os.path.splitext(file.name)
             file_extension = split_tup[1]
         
@@ -258,14 +258,13 @@ def processing_csv_pdf_docx(uploaded_file2):
 
 if use_large: #option == 'Large Size Pdf/Dcx and Csv':
     use_small = False
-    uploaded_file2 = uploaded_file
     
         #s= st.select_slider('Choose Pdf/docx or csv bot. Please delete csv before using pdf/docx',options = ['pdf/docx', 'csv'])
 
 
-    if uploaded_file2:
+    if uploaded_file:
         
-        vectorstore = processing_csv_pdf_docx(uploaded_file2)
+        vectorstore = processing_csv_pdf_docx(uploaded_file)
 
         for msg in st.session_state.messages:
             st.chat_message(msg["role"]).write(msg["content"])
@@ -294,9 +293,9 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
             
             general_system_template = r""" 
 -You are a helpful assistant. You have been provided with context.
--Answer the question from provided data, do not make up any answer.
+-Answer the question from provided context, do not make up any answer.
 -Use the following pieces of data to answer the question at the end. 
--Your answer should not exceed 30 words.
+-Your answer should not exceed 50 words.
 
 -Following is the relevant data:
 ----
