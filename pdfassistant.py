@@ -27,7 +27,7 @@ api_key1 = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = api_key1
 #os.environ["OPENAI_API_KEY"] = api_key2
-llm = ChatGooglePalm(temperature=0.8, max_output_tokens= 512 ,verbose=True,streaming=True)
+llm = GooglePalm(temperature=0.3, max_output_tokens= 1024 ,verbose=True,streaming=True)
 #llm = OpenAI(temperature=0.9,verbose=True)
 
 
@@ -74,8 +74,8 @@ def processing_pdf_docx(uploaded_file):
         # Split the text using Character Text Splitter
         text_splitter = CharacterTextSplitter(
             separator="\n",
-            chunk_size=2000,
-            chunk_overlap=200,
+            chunk_size=500,
+            chunk_overlap=50,
             length_function=len,
         )
         texts = text_splitter.split_text(raw_text)
@@ -176,7 +176,7 @@ if use_small:# option == 'Small Size Pdf/Docx':
                 )
 
                 # Run the question-answering chain
-                docs = document_search.similarity_search(prompt, k=5)
+                docs = document_search.similarity_search(prompt, k=3)
 
                     # Load question-answering chain
                 chain = load_qa_chain(llm=llm, verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
@@ -209,7 +209,7 @@ def processing_csv_pdf_docx(uploaded_file):
                     tmp_file_path1 = tmp_file1.name
                     loader = PyPDFLoader(file_path=tmp_file_path1)
                     documents = loader.load()
-                    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
                     data += text_splitter.split_documents(documents)
 
 
@@ -223,7 +223,7 @@ def processing_csv_pdf_docx(uploaded_file):
                                 'delimiter': ','})
                     documents = loader.load()
                     
-                    text_splitter = CharacterTextSplitter(chunk_size=2048, chunk_overlap=200)
+                    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         
                     data += text_splitter.split_documents(documents)
                     st.sidebar.header(f"Data-{file.name}")
@@ -237,7 +237,7 @@ def processing_csv_pdf_docx(uploaded_file):
                     tmp_file_path = tmp_file.name
                     loader = UnstructuredWordDocumentLoader(file_path=tmp_file_path)
                     documents = loader.load()
-                    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
                     data += text_splitter.split_documents(documents)
                 
@@ -362,7 +362,7 @@ Human: {question}
                 # Load question-answering chain
             chain = ConversationalRetrievalChain.from_llm(  
             llm , verbose= True, memory = memory, 
-            retriever=vectorstore.as_retriever(search_kwargs={'k': 15}), max_tokens_limit=1000#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
+            retriever=vectorstore.as_retriever(search_kwargs={'k': 4}), max_tokens_limit=1000#,condense_question_prompt= qa_prompt2, condense_question_llm=llm2
             ,combine_docs_chain_kwargs={'prompt':qa_prompt})
             #chain = ConversationalRetrievalChain.from_llm(GooglePalm(temperature=0.5), verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                 
