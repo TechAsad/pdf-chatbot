@@ -153,7 +153,7 @@ if use_small:# option == 'Small Size Pdf/Docx':
                 prompt_template = r"""
     -You are a helpful assistant.
     -talk humbly. Answer my question from the provided context.
-    -Use the following pieces of context to answer the question at the end. Your answer should be less than 30 words.
+    -Use the following pieces of context to answer the question at the end.
     -If you don't know the answer, just say that you don't know.
     -this is the context:
     ---------
@@ -294,8 +294,7 @@ if use_large: #option == 'Large Size Pdf/Dcx and Csv':
             general_system_template = r""" 
 -You are a helpful assistant. You have been provided with context.
 -Answer the question from provided context, do not make up any answer.
--Use the following pieces of data to answer the question at the end. 
--Your answer should not exceed 50 words.
+-Use the following pieces of data to answer the question at the end.
 
 -Following is the relevant data:
 ----
