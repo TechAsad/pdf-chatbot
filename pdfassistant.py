@@ -165,7 +165,7 @@ def main():
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 load_files()
-                processing_csv_pdf_docx(uploaded_file)
+                db = processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
             
@@ -258,8 +258,8 @@ def main():
                             st.write(response)
                         else:
                             with st.spinner('Bot is typing ...'):
-                                docs = VectorSearchTools.dbsearch(prompt)
-                                
+                                #docs = VectorSearchTools.dbsearch(prompt)
+                                docs = db.similarity_search(prompt, k=5, fetch_k= 10)
                                 response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
                                 st.session_state.messages.append({"role": "Assistant", "content": response})
                                 
