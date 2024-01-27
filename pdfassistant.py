@@ -152,16 +152,20 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state['history']  = []
 
 
-########--Main PDF--########
+########--Save PDF--########
     
-    
+def load_files():
+    for file in uploaded_file:
+        with open(os.path.join('uploaded_files', file.name), 'wb') as f:
+            f.write(file.getbuffer())
 
 
 def main():
-   # try:
+    try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                vectorstore = processing_csv_pdf_docx(uploaded_file)
+                load_files()
+                processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
             
@@ -264,12 +268,12 @@ def main():
                                                 
                                 st.write(response)
                                 
-   # except Exception as e:
-    #    "Sorry, there was a problem."
-     #   if use_google:
-      #      "google PaLM AI only take English Questions."
-       # elif use_openai:
-        #    "Please check your OpenAI API key"
+    except Exception as e:
+        "Sorry, there was a problem."
+        if use_google:
+            "google PaLM AI only take English Questions. Or the AI could not find the answer"
+        elif use_openai:
+            "Please check your OpenAI API key"
          
 
 
