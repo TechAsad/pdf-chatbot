@@ -127,7 +127,7 @@ def processing_csv_pdf_docx(uploaded_file):
         # Create a FAISS index from texts and embeddings
 
         vectorstore = FAISS.from_documents(data, embeddings)
-        vectorstore.save_local("faiss")
+        vectorstore.save_local("./faiss")
         return vectorstore
 
 
