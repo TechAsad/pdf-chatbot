@@ -161,7 +161,7 @@ def load_files():
 
 
 def main():
-    try:
+    #try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 load_files()
@@ -268,12 +268,13 @@ def main():
                                                 
                                 st.write(response)
                                 
-    except Exception as e:
-        "Sorry, there was a problem."
-        if use_google:
-            "google PaLM AI only take English Questions. Or the AI could not find the answer"
-        elif use_openai:
-            "Please check your OpenAI API key"
+   # except Exception as e:
+    #    "Sorry, there was a problem."
+     #   if use_google:
+      
+      #      "google PaLM AI only take English Questions. Or the AI could not find the answer"
+      #  elif use_openai:
+       #     "Please check your OpenAI API key"
          
 
 
