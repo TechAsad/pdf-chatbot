@@ -126,7 +126,6 @@ def processing_csv_pdf_docx(uploaded_file):
 
         # Create a FAISS index from texts and embeddings
         vectorstore = FAISS.from_documents(data, embeddings)
-        vectorstore.save_local("faiss")
         return vectorstore
 
 
@@ -157,14 +156,14 @@ def load_files():
         with open(os.path.join('uploaded_files', file.name), 'wb') as f:
             f.write(file.getbuffer())
             st.success(f'Saved file: {file.name}', icon="✅")
-    processing_csv_pdf_docx(uploaded_file)
+    
 
 
 def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                load_files()
+                vectorstore= processing_csv_pdf_docx(uploaded_file)
         
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
@@ -228,7 +227,7 @@ def main():
                 Helpful Answer: 
                 """)
                 
-                docs = VectorSearchTools.dbsearch(prompt)
+                
 
                 PROMPT = PromptTemplate(
                     template=prompt_template, input_variables=["context", "question", "chat_history"]
@@ -237,7 +236,7 @@ def main():
                 # Run the question-answering chain
                 
                 
-                print(memory)
+                
                     # Load question-answering chain
                 chain = load_qa_chain(llm=llm, verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
                     
@@ -255,6 +254,7 @@ def main():
                         st.write(response)
                     else:
                         with st.spinner('Bot is typing ...'):
+                            docs = vectorstore.similarity_search(prompt, k=5, fetch_k=50)
                     
                             response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
                             st.session_state.messages.append({"role": "Assistant", "content": response})
