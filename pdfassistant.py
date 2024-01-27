@@ -127,7 +127,7 @@ def processing_csv_pdf_docx(uploaded_file):
         # Create a FAISS index from texts and embeddings
 
         vectorstore = FAISS.from_documents(data, embeddings)
-        vectorstore.save_local("./faiss")
+        #vectorstore.save_local("./faiss")
         return vectorstore
 
 
@@ -161,7 +161,7 @@ def load_files():
 
 
 def main():
-    try:
+   # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 load_files()
@@ -268,13 +268,13 @@ def main():
                                                 
                                 st.write(response)
                                 
-    except Exception as e:
-        "Sorry, there was a problem."
-        if use_google:
+    #except Exception as e:
+     #   "Sorry, there was a problem."
+      #  if use_google:
       
-            "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
-        elif use_openai:
-            "Please check your OpenAI API key"
+       #     "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
+        #elif use_openai:
+         #   "Please check your OpenAI API key"
          
 
 
