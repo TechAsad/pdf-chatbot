@@ -151,9 +151,7 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 
 
 ########--Main PDF--########
-def load_files():
-    for file in uploaded_file:
-        processing_csv_pdf_docx(file)
+    
     
 
 
@@ -161,9 +159,9 @@ def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                load_files()
+                processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
-                    st.success(f'File Embedded: {file}', icon="✅")
+                    st.success(f'File Embedded: {file.name}', icon="✅")
             
                 for msg in st.session_state.messages:
                     st.chat_message(msg["role"]).write(msg["content"])      
