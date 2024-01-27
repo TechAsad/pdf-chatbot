@@ -153,9 +153,7 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 ########--Main PDF--########
 def load_files():
     for file in uploaded_file:
-        with open(os.path.join('uploaded_files', file.name), 'wb') as f:
-            f.write(file.getbuffer())
-            processing_csv_pdf_docx(file)
+        processing_csv_pdf_docx(file)
     
 
 
