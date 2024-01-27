@@ -151,8 +151,8 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 
 
 ########--Main PDF--########
-def load_files(user_files):
-    for file in user_files:
+def load_files():
+    for file in uploaded_file:
         with open(os.path.join('uploaded_files', file.name), 'wb') as f:
             f.write(file.getbuffer())
             processing_csv_pdf_docx(file)
@@ -163,8 +163,8 @@ def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
+                load_files()
                 for file in uploaded_file:
-                    load_files(file)
                     st.success(f'File Embedded: {file.name}', icon="✅")
             
                 for msg in st.session_state.messages:
