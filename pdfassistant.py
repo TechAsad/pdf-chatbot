@@ -140,12 +140,23 @@ if not uploaded_file:
     st.warning("Upload your file(s) to start chatting!")
     
 
+
 if 'history' not in st.session_state:  
         st.session_state['history'] = []
+
 
 if "messages" not in st.session_state or st.sidebar.button("Clear conversation history"):
     st.session_state["messages"]= []
     st.session_state['history']  = []
+
+
+########--Main PDF--########
+def load_files(user_files):
+    for file in user_files:
+        with open(os.path.join('user_files', file.name), 'wb') as f:
+            f.write(file.getbuffer())
+            processing_csv_pdf_docx(file)
+    
 
 
 def main():
@@ -153,7 +164,7 @@ def main():
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 for file in uploaded_file:
-                    vectorstore= processing_csv_pdf_docx(uploaded_file)
+                    load_files(file)
                     st.success(f'File Embedded: {file.name}', icon="✅")
             
                 for msg in st.session_state.messages:
@@ -245,7 +256,7 @@ def main():
                             st.write(response)
                         else:
                             with st.spinner('Bot is typing ...'):
-                                docs = vectorstore.similarity_search(prompt, k=5, fetch_k=50)
+                                docs = VectorSearchTools.dbsearch(prompt)
                         
                                 response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
                                 st.session_state.messages.append({"role": "Assistant", "content": response})
