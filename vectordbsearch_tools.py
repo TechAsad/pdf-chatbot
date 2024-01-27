@@ -18,7 +18,7 @@ class VectorSearchTools():
             model_kwargs={'device': 'cpu'})
         db = FAISS.load_local("faiss", embeddings)
         
-        retrieved_docs = db.similarity_search(query, k=5)
+        retrieved_docs = db.similarity_search(query, k=5, fetch_k= 40)
 
 
 

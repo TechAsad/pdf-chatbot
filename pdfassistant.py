@@ -212,7 +212,7 @@ def main():
                     talk humbly. Answer my question from the provided context. Do not answer from your own training data.
                     Use the following pieces of context to answer the question at the end.
                     If you don't know the answer, just say that you don't know. Do not makeup any answer.
-                    Do not answer hypothetically.
+                    Do not answer hypothetically. Do not answer in more than 100 words.
                     Please Do Not say: "Based on the provided context"
                     Always use the context to find the answer.
                     
@@ -226,7 +226,7 @@ def main():
                     {chat_history}
                     ---------
 
-                    New Question: {question}
+                    Question: {question}
 
                     Helpful Answer: 
                     """)
