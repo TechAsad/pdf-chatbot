@@ -89,3 +89,5 @@ urllib3==2.1.0
 validators==0.22.0
 yarl==1.9.4
 zipp==3.17.0
+sentence-transformers
+unstructured
