@@ -161,7 +161,7 @@ def load_files():
 
 
 def main():
-    #try:
+    try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 load_files()
@@ -208,8 +208,8 @@ def main():
                     compliment = ['thank you', 'thanks', 'thanks a lot', 'thanks a bunch', 'great', 'ok', 'ok thanks', 'okay', 'great', 'awesome', 'nice']
                                 
                     prompt_template =dedent(r"""
-                    You are a helpful assistant to help students study from their study material.
-                    talk humbly. Answer my question from the provided context. Do not answer from your own training data.
+                    You are a helpful assistant to help user find information from his documents.
+                    talk humbly. Answer the question from the provided context. Do not answer from your own training data.
                     Use the following pieces of context to answer the question at the end.
                     If you don't know the answer, just say that you don't know. Do not makeup any answer.
                     Do not answer hypothetically. Do not answer in more than 100 words.
@@ -268,13 +268,13 @@ def main():
                                                 
                                 st.write(response)
                                 
-   # except Exception as e:
-    #    "Sorry, there was a problem."
-     #   if use_google:
+    except Exception as e:
+        "Sorry, there was a problem."
+        if use_google:
       
-      #      "google PaLM AI only take English Questions. Or the AI could not find the answer"
-      #  elif use_openai:
-       #     "Please check your OpenAI API key"
+            "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
+        elif use_openai:
+            "Please check your OpenAI API key"
          
 
 
