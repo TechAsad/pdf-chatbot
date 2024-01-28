@@ -164,7 +164,6 @@ def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                load_files()
                 db = processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
@@ -247,7 +246,7 @@ def main():
                 #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
 
                 with st.chat_message("assistant"):
-                    st_cb = StreamlitCallbackHandler(st.container())
+                    
                     if prompt.lower() in greetings:
                         response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
                         st.session_state.messages.append({"role": "Assistant", "content": response})
@@ -261,7 +260,7 @@ def main():
                             #docs = VectorSearchTools.dbsearch(prompt)
                             if uploaded_file:
                                 docs = db.similarity_search(prompt, k=5, fetch_k= 10)
-                                response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
+                                response = chain.run(input_documents=docs, question = prompt)
                                 st.session_state.messages.append({"role": "Assistant", "content": response})
                                     
                                 assistant_message = {"role": "assistant", "content": response}
@@ -273,7 +272,7 @@ def main():
                                         ),
                                         # The `variable_name` here is what must align with memory
                                         MessagesPlaceholder(variable_name="chat_history"),
-                                        HumanMessagePromptTemplate.from_template("{question}")
+                                        HumanMessagePromptTemplate.from_template("{prompt}")
                                     ]
                                 )
                                 # Notice that we `return_messages=True` to fit into the MessagesPlaceholder
