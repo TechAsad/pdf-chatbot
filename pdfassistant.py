@@ -158,9 +158,10 @@ def main():
                 processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
+                db = processing_csv_pdf_docx(uploaded_file)
             else:
                 uploaded_file_test = "./uploaded_files/test.pdf"
-                processing_csv_pdf_docx(uploaded_file)
+                processing_csv_pdf_docx(uploaded_file_test)
             db = processing_csv_pdf_docx(uploaded_file_test)
         
             for msg in st.session_state.messages:
