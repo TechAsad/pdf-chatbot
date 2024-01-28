@@ -142,7 +142,6 @@ if not uploaded_file:
     st.warning("Upload your file(s) to start chatting!")
     
 
-
 if 'history' not in st.session_state:  
         st.session_state['history'] = []
 
@@ -152,25 +151,17 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state['history']  = []
 
 
-########--Save PDF--########
-    
-def load_files():
-    for file in uploaded_file:
-        with open(os.path.join('./uploaded_files', file.name), 'wb') as f:
-            f.write(file.getbuffer())
-
-
 def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                load_files()
+                processing_csv_pdf_docx(uploaded_file)
+                for file in uploaded_file:
+                    st.success(f'File Embedded: {file.name}', icon="✅")
             else:
-                uploaded_file = "./uploaded_files/test.txt"
-                load_files()
-            db = processing_csv_pdf_docx(uploaded_file)
-            for file in uploaded_file:
-                st.success(f'File Embedded: {file.name}', icon="✅")
+                uploaded_file_test = "./uploaded_files/test.txt"
+                processing_csv_pdf_docx(uploaded_file)
+            db = processing_csv_pdf_docx(uploaded_file_test)
         
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
