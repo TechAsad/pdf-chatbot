@@ -34,12 +34,12 @@ os.environ["GOOGLE_API_KEY"] = google_api_key
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
 st.header('Knowledge Query Assistant \n\n Built by DataWil Tech')
-st.write("I'm here to help you get information from your file.")
+st.write("Please upload your code to initiate a chat session, or feel free to inquire about any general topics you may have questions on.")
 st.sidebar.title('Options')
 
 
 st.sidebar.subheader("Please Choose the AI Engine")
-use_google = st.sidebar.checkbox("Use Free Google AI")
+use_google = st.sidebar.checkbox("Use Free DataWil Tech AI")
 use_openai = st.sidebar.checkbox("Use OpenAI with your API Key")
 
 openai_api_key = st.sidebar.text_input("Enter your OpenAI API Key:", type="password")
