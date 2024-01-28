@@ -160,9 +160,9 @@ def main():
                     st.success(f'File Embedded: {file.name}', icon="✅")
                 db = processing_csv_pdf_docx(uploaded_file)
             else:
-                uploaded_file_test = "./uploaded_files/test.pdf"
+                uploaded_file_test = "/uploaded_files/test.pdf"
                 processing_csv_pdf_docx(uploaded_file_test)
-            db = processing_csv_pdf_docx(uploaded_file_test)
+            db =processing_csv_pdf_docx(uploaded_file_test)
         
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
