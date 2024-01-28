@@ -269,8 +269,11 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
-                                            
-                            response =llm.invoke(prompt).content
+                            prompt_chat = ChatPromptTemplate.from_template("you are a helpful assistant. current conversation: {chat_history}. Question: {question}")
+                            
+                            chain = prompt_chat | llm
+                                                                        
+                            chain.invoke({"chat_history": memory, "question": prompt})
                             st.session_state.messages.append({"role": "Assistant", "content": response})
                                 
                             assistant_message = {"role": "assistant", "content": response}
