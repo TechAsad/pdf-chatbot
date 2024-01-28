@@ -245,11 +245,11 @@ def main():
                     if prompt.lower() in greetings:
                         response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
                         st.session_state.messages.append({"role": "Assistant", "content": response})
-                        st.write(response)
+                        
                     elif prompt.lower() in compliment:
                         response = 'My pleasure! If you have any more questions, feel free to ask.'
                         st.session_state.messages.append({"role": "Assistant", "content": response})
-                        st.write(response)
+                        
                     elif uploaded_file:
                         with st.spinner('Bot is typing ...'):
                             #docs = VectorSearchTools.dbsearch(prompt)
