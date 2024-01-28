@@ -269,21 +269,19 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
-                            prompt_chat = ChatPromptTemplate(
-                                messages=[
-                                    SystemMessagePromptTemplate.from_template(
-                                        "You are a nice chatbot having a conversation with a human."
-                                    ),
-                                    # The `variable_name` here is what must align with memory
-                                    MessagesPlaceholder(variable_name="chat_history"),
-                                    HumanMessagePromptTemplate.from_template("{question}")
-                                ]
-                            )
-                        
-                            response =llm.invoke(prompt_chat
-                            )
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
+                            template = r"""You are a nice chatbot having a conversation with a human.
+
+                            Previous conversation:
+                            {chat_history}
+
+                            New human question: {prompt}
+                            Response:"""
                             
+                            prompt_chat = PromptTemplate.from_template(template)
+                                                    
+                            response =llm.invoke(prompt_chat)
+                            st.session_state.messages.append({"role": "Assistant", "content": response})
+                                
                             assistant_message = {"role": "assistant", "content": response}
 
                             
