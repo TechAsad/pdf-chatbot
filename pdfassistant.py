@@ -159,7 +159,7 @@ def main():
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
             else:
-                uploaded_file_test = "./uploaded_files/test.txt"
+                uploaded_file_test = "./uploaded_files/test.pdf"
                 processing_csv_pdf_docx(uploaded_file)
             db = processing_csv_pdf_docx(uploaded_file_test)
         
