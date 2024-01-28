@@ -269,7 +269,7 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
-                            prompt = ChatPromptTemplate(
+                            prompt_chat = ChatPromptTemplate(
                                 messages=[
                                     SystemMessagePromptTemplate.from_template(
                                         "You are a nice chatbot having a conversation with a human."
@@ -279,14 +279,8 @@ def main():
                                     HumanMessagePromptTemplate.from_template("{question}")
                                 ]
                             )
-                            # Notice that we `return_messages=True` to fit into the MessagesPlaceholder
-                            # Notice that `"chat_history"` aligns with the MessagesPlaceholder name.
-                            memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-                            response = LLMChain(
-                                llm=llm,
-                                prompt=prompt,
-                                verbose=True,
-                                memory=memory
+                        
+                            response =llm.invoke(prompt_chat
                             )
                             st.session_state.messages.append({"role": "Assistant", "content": response})
                             
