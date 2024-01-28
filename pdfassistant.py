@@ -273,7 +273,7 @@ def main():
                             
                             chain = prompt_chat | llm
                                                                         
-                            response =chain.invoke({"chat_history": memory, "question": prompt})
+                            response =chain.invoke({"chat_history": memory, "question": prompt}).content
                             st.session_state.messages.append({"role": "Assistant", "content": response})
                                 
                             assistant_message = {"role": "assistant", "content": response}
