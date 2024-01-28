@@ -33,7 +33,7 @@ google_api_key = st.secrets["GOOGLE_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = google_api_key
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
-st.header('Knowledge Query Assistant')
+st.header('** Knowledge Query Assistant ** \n\n Built by ** DataWil Tech **')
 st.write("I'm here to help you get information from your file.")
 st.sidebar.title('Options')
 
