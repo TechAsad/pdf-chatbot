@@ -1,15 +1,13 @@
 import streamlit as st
 from PyPDF2 import PdfReader
 import langchain
-import docx
-import pypdf 
 from textwrap import dedent
 import pandas as pd
 from langchain_community.callbacks import StreamlitCallbackHandler
 from langchain_openai import ChatOpenAI
 from langchain_community.chat_models import ChatGooglePalm
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
@@ -18,15 +16,20 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.document_loaders.pdf import PyPDFLoader
 from langchain.document_loaders.word_document import UnstructuredWordDocumentLoader
 from langchain.chains.question_answering import load_qa_chain
-from langchain_community.document_loaders import DirectoryLoader
-from vectordbsearch_tools import VectorSearchTools
-from langchain_community.llms.ctransformers import CTransformers
-from langchain_community.llms.ollama import Ollama
-from langchain.llms.llamacpp import LlamaCpp
-from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.agents import load_tools
 import os
+
+from langchain.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
+from langchain.chains import LLMChain
+
+
+
 
 
 google_api_key = st.secrets["GOOGLE_API_KEY"]
@@ -169,105 +172,131 @@ def main():
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
             
-                for msg in st.session_state.messages:
-                    st.chat_message(msg["role"]).write(msg["content"])      
+            for msg in st.session_state.messages:
+                st.chat_message(msg["role"]).write(msg["content"])      
+            
+            if prompt := st.chat_input(placeholder="Type your question!"):
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                st.chat_message("user").write(prompt)
+                memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "", ai_prefix= "")
+                user_message = {"role": "user", "content": prompt}
                 
-                if prompt := st.chat_input(placeholder="Type your question!"):
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    st.chat_message("user").write(prompt)
-                    memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "", ai_prefix= "")
-                    user_message = {"role": "user", "content": prompt}
-                    
-                    
-                    for i in range(0, len(st.session_state.messages), 2):
-                        if i + 1 < len(st.session_state.messages):
-                            user_prompt = st.session_state.messages[i]
-                            ai_res = st.session_state.messages[i + 1]
-                            
-                            current_role = user_prompt["role"]
-                            current_content = user_prompt["content"]
-                            
-                            next_role = ai_res["role"]
-                            next_content = ai_res["content"]
-                            
-                            # Concatenate role and content for context and output
-                            user = f"{current_role}: {current_content}"
-                            ai = f"{next_role}: {next_content}"
-                            
-                            memory.save_context({"question": user}, {"output": ai})
-
-                    # Get user input -> Generate the answer
-                    greetings = ['Hey', 'Hello', 'hi', 'hello', 'hey', 'helloo', 'hellooo', 'g morning', 'gmorning', 'good morning', 'morning',
-                                'good day', 'good afternoon', 'good evening', 'greetings', 'greeting', 'good to see you',
-                                'its good seeing you', 'how are you', "how're you", 'how are you doing', "how ya doin'", 'how ya doin',
-                                'how is everything', 'how is everything going', "how's everything going", 'how is you', "how's you",
-                                'how are things', "how're things", 'how is it going', "how's it going", "how's it goin'", "how's it goin",
-                                'how is life been treating you', "how's life been treating you", 'how have you been', "how've you been",
-                                'what is up', "what's up", 'what is cracking', "what's cracking", 'what is good', "what's good",
-                                'what is happening', "what's happening", 'what is new', "what's new", 'what is neww', "g’day", 'howdy']
-                    compliment = ['thank you', 'thanks', 'thanks a lot', 'thanks a bunch', 'great', 'ok', 'ok thanks', 'okay', 'great', 'awesome', 'nice']
-                                
-                    prompt_template =dedent(r"""
-                    You are a helpful assistant to help user find information from his documents.
-                    talk humbly. Answer the question from the provided context. Do not answer from your own training data.
-                    Use the following pieces of context to answer the question at the end.
-                    If you don't know the answer, just say that you don't know. Do not makeup any answer.
-                    Do not answer hypothetically. Do not answer in more than 100 words.
-                    Please Do Not say: "Based on the provided context"
-                    Always use the context to find the answer.
-                    
-                    this is the context from study material:
-                    ---------
-                    {context}
-                    ---------
-
-                    Current Conversation: 
-                    ---------
-                    {chat_history}
-                    ---------
-
-                    Question: {question}
-
-                    Helpful Answer: 
-                    """)
-                    
-                    
-
-                    PROMPT = PromptTemplate(
-                        template=prompt_template, input_variables=["context", "question", "chat_history"]
-                    )
-
-                    # Run the question-answering chain
-                    
-                    
-                    
-                        # Load question-answering chain
-                    chain = load_qa_chain(llm=llm, verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
+                
+                for i in range(0, len(st.session_state.messages), 2):
+                    if i + 1 < len(st.session_state.messages):
+                        user_prompt = st.session_state.messages[i]
+                        ai_res = st.session_state.messages[i + 1]
                         
-                    #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
+                        current_role = user_prompt["role"]
+                        current_content = user_prompt["content"]
+                        
+                        next_role = ai_res["role"]
+                        next_content = ai_res["content"]
+                        
+                        # Concatenate role and content for context and output
+                        user = f"{current_role}: {current_content}"
+                        ai = f"{next_role}: {next_content}"
+                        
+                        memory.save_context({"question": user}, {"output": ai})
 
-                    with st.chat_message("assistant"):
-                        st_cb = StreamlitCallbackHandler(st.container())
-                        if prompt.lower() in greetings:
-                            response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
-                            st.write(response)
-                        elif prompt.lower() in compliment:
-                            response = 'My pleasure! If you have any more questions, feel free to ask.'
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
-                            st.write(response)
-                        else:
-                            with st.spinner('Bot is typing ...'):
-                                #docs = VectorSearchTools.dbsearch(prompt)
-                                docs = db.similarity_search(prompt, k=5, fetch_k= 10)
-                                response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
-                                st.session_state.messages.append({"role": "Assistant", "content": response})
-                                
-                                assistant_message = {"role": "assistant", "content": response}
+                # Get user input -> Generate the answer
+                greetings = ['Hey', 'Hello', 'hi', 'hello', 'hey', 'helloo', 'hellooo', 'g morning', 'gmorning', 'good morning', 'morning',
+                            'good day', 'good afternoon', 'good evening', 'greetings', 'greeting', 'good to see you',
+                            'its good seeing you', 'how are you', "how're you", 'how are you doing', "how ya doin'", 'how ya doin',
+                            'how is everything', 'how is everything going', "how's everything going", 'how is you', "how's you",
+                            'how are things', "how're things", 'how is it going', "how's it going", "how's it goin'", "how's it goin",
+                            'how is life been treating you', "how's life been treating you", 'how have you been', "how've you been",
+                            'what is up', "what's up", 'what is cracking', "what's cracking", 'what is good', "what's good",
+                            'what is happening', "what's happening", 'what is new', "what's new", 'what is neww', "g’day", 'howdy']
+                compliment = ['thank you', 'thanks', 'thanks a lot', 'thanks a bunch', 'great', 'ok', 'ok thanks', 'okay', 'great', 'awesome', 'nice']
                             
-                                                
-                                st.write(response)
-                                
+                prompt_template =dedent(r"""
+                You are a helpful assistant to help user find information from his documents.
+                talk humbly. Answer the question from the provided context. Do not answer from your own training data.
+                Use the following pieces of context to answer the question at the end.
+                If you don't know the answer, just say that you don't know. Do not makeup any answer.
+                Do not answer hypothetically. Do not answer in more than 100 words.
+                Please Do Not say: "Based on the provided context"
+                Always use the context to find the answer.
+                
+                this is the context from study material:
+                ---------
+                {context}
+                ---------
+
+                Current Conversation: 
+                ---------
+                {chat_history}
+                ---------
+
+                Question: {question}
+
+                Helpful Answer: 
+                """)
+                
+                
+
+                PROMPT = PromptTemplate(
+                    template=prompt_template, input_variables=["context", "question", "chat_history"]
+                )
+
+                # Run the question-answering chain
+                
+                
+                
+                    # Load question-answering chain
+                chain = load_qa_chain(llm=llm, verbose= True, prompt = PROMPT,memory=memory, chain_type="stuff")
+                    
+                #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
+
+                with st.chat_message("assistant"):
+                    st_cb = StreamlitCallbackHandler(st.container())
+                    if prompt.lower() in greetings:
+                        response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
+                        st.session_state.messages.append({"role": "Assistant", "content": response})
+                        st.write(response)
+                    elif prompt.lower() in compliment:
+                        response = 'My pleasure! If you have any more questions, feel free to ask.'
+                        st.session_state.messages.append({"role": "Assistant", "content": response})
+                        st.write(response)
+                    elif uploaded_file:
+                        with st.spinner('Bot is typing ...'):
+                            #docs = VectorSearchTools.dbsearch(prompt)
+                            docs = db.similarity_search(prompt, k=5, fetch_k= 10)
+                            response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
+                            st.session_state.messages.append({"role": "Assistant", "content": response})
+                            
+                            assistant_message = {"role": "assistant", "content": response}
+                    else:
+                        with st.spinner('Bot is typing ...'):
+                            prompt = ChatPromptTemplate(
+                                messages=[
+                                    SystemMessagePromptTemplate.from_template(
+                                        "You are a nice chatbot having a conversation with a human."
+                                    ),
+                                    # The `variable_name` here is what must align with memory
+                                    MessagesPlaceholder(variable_name="chat_history"),
+                                    HumanMessagePromptTemplate.from_template("{question}")
+                                ]
+                            )
+                            # Notice that we `return_messages=True` to fit into the MessagesPlaceholder
+                            # Notice that `"chat_history"` aligns with the MessagesPlaceholder name.
+                            memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+                            conversation = LLMChain(
+                                llm=llm,
+                                prompt=prompt,
+                                verbose=True,
+                                memory=memory
+                            )
+                            st.session_state.messages.append({"role": "Assistant", "content": response})
+                            
+                            assistant_message = {"role": "assistant", "content": response}
+
+                            
+                        
+                                            
+                            st.write(response)
+                            
     except Exception as e:
         "Sorry, there was a problem. A corrupted file or;"
         if use_google:
