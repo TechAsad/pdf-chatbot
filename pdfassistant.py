@@ -21,12 +21,8 @@ from langchain.agents import load_tools
 import os
 
 from langchain.prompts import (
-    ChatPromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
+    ChatPromptTemplate
 )
-from langchain.chains import LLMChain
 
 
 
@@ -157,20 +153,15 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 
 ########--Save PDF--########
     
-def load_files():
-    for file in uploaded_file:
-        with open(os.path.join('./uploaded_files', file.name), 'wb') as f:
-            f.write(file.getbuffer())
 
 
 def main():
-    #try:
+    try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                load_files()
                 db = processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
-                    st.success(f'File Embedded: {file.name}', icon="✅")
+                    st.success(f'Your File: {file.name} is Embedded', icon="✅")
             
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
@@ -283,12 +274,12 @@ def main():
                                             
                     st.write(response)
                             
-    #except Exception as e:
-    #    "Sorry, there was a problem. A corrupted file or;"
-     #   if use_google:
-      #      "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
-       # elif use_openai:
-        #    "Please check your OpenAI API key"
+    except Exception as e:
+        "Sorry, there was a problem. A corrupted file or;"
+        if use_google:
+            "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
+        elif use_openai:
+            "Please check your OpenAI API key"
          
 
 
