@@ -21,6 +21,13 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.chains import LLMChain
 import os
 
+from langchain_openai import ChatOpenAI
+from langchain.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 
 google_api_key = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
@@ -259,18 +266,18 @@ def main():
                                     
                                 assistant_message = {"role": "assistant", "content": response}
                             else:
-                                template =dedent(r"""
-                                You are a nice chatbot having a conversation with a human.
-
-                                Previous conversation:
-                                {chat_history}
-
-                                New human question: {question}
-                                Response:
-                                """)
-                                prompt = PromptTemplate.from_template(template)
-                                # Notice that we need to align the `memory_key`
-                                
+                                prompt = ChatPromptTemplate(
+                                    messages=[
+                                        SystemMessagePromptTemplate.from_template(
+                                            "You are a nice chatbot having a conversation with a human."
+                                        ),
+                                        # The `variable_name` here is what must align with memory
+                                        MessagesPlaceholder(variable_name="chat_history"),
+                                        HumanMessagePromptTemplate.from_template("{question}")
+                                    ]
+                                )
+                                # Notice that we `return_messages=True` to fit into the MessagesPlaceholder
+                                # Notice that `"chat_history"` aligns with the MessagesPlaceholder name.
                                 response = LLMChain(
                                     llm=llm,
                                     prompt=prompt,
@@ -282,7 +289,7 @@ def main():
                                 assistant_message = {"role": "assistant", "content": response}
                            
                                 
-                            st.write(response)
+                                st.write(response)
                             
     #except Exception as e:
      #   "Sorry, there was a problem. A corrupted file or;"
