@@ -165,10 +165,10 @@ def main():
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 load_files()
-            db = processing_csv_pdf_docx(uploaded_file)
-            for file in uploaded_file:
-                st.success(f'File Embedded: {file.name}', icon="✅")
-        
+                db = processing_csv_pdf_docx(uploaded_file)
+                for file in uploaded_file:
+                    st.success(f'File Embedded: {file.name}', icon="✅")
+            
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
             
