@@ -269,14 +269,14 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
-                            template = r"""You are a nice chatbot having a conversation with a human.
+                            template = """You are a nice chatbot having a conversation with a human.
 
                             Previous conversation:
-                            {chat_history}
+                            {memory}
 
                             New human question: {prompt}
                             Response:"""
-                            
+
                             prompt_chat = PromptTemplate.from_template(template)
                                                     
                             response =llm.invoke(prompt_chat)
