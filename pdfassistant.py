@@ -155,15 +155,18 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
 ########--Save PDF--########
     
 def load_files():
+    db = processing_csv_pdf_docx(uploaded_file)
     for file in uploaded_file:
         with open(os.path.join('./uploaded_files', file.name), 'wb') as f:
             f.write(file.getbuffer())
+
 
 
 def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
+                load_files()
                 db = processing_csv_pdf_docx(uploaded_file)
                 for file in uploaded_file:
                     st.success(f'File Embedded: {file.name}', icon="✅")
