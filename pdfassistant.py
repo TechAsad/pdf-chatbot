@@ -18,14 +18,7 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.document_loaders.pdf import PyPDFLoader
 from langchain.document_loaders.word_document import UnstructuredWordDocumentLoader
 from langchain.chains.question_answering import load_qa_chain
-from langchain_community.document_loaders import DirectoryLoader
-from vectordbsearch_tools import VectorSearchTools
-from langchain_community.llms.ctransformers import CTransformers
-from langchain_community.llms.ollama import Ollama
-from langchain.llms.llamacpp import LlamaCpp
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.agents import load_tools
+from langchain.chains import LLMChain
 import os
 
 
@@ -266,13 +259,27 @@ def main():
                                     
                                 assistant_message = {"role": "assistant", "content": response}
                             else:
-                                response = llm.invoke(prompt, kwargs= {"chat_history": memory})
+                                template = """You are a nice chatbot having a conversation with a human.
+
+                                Previous conversation:
+                                {chat_history}
+
+                                New human question: {question}
+                                Response:"""
+                                prompt = PromptTemplate.from_template(template)
+                                # Notice that we need to align the `memory_key`
+                                
+                                response = LLMChain(
+                                    llm=llm,
+                                    prompt=prompt,
+                                    verbose=True,
+                                    memory=memory
+                                )
                                 st.session_state.messages.append({"role": "Assistant", "content": response})
                                     
                                 assistant_message = {"role": "assistant", "content": response}
                            
-                        
-                                            
+                                
                             st.write(response)
                             
     #except Exception as e:
