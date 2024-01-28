@@ -34,7 +34,7 @@ os.environ["GOOGLE_API_KEY"] = google_api_key
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
 st.header('Knowledge Query Assistant \n\n Built by DataWil Tech')
-st.write("Please upload your code to initiate a chat session, or feel free to inquire about any general topics you may have questions on.")
+st.write("Upload your file to begin a chat, or ask any general questions you have")
 st.sidebar.title('Options')
 
 
