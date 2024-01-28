@@ -262,7 +262,7 @@ def main():
                             if uploaded_file:
                                 docs = db.similarity_search(prompt, k=5, fetch_k= 10)
                             else:
-                                docs = ['Document(page_content= "Context not provide, answer the question from your knowledge")']
+                                docs = "page_content= Context not provide, answer the question from your knowledge"
                             response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
                             st.session_state.messages.append({"role": "Assistant", "content": response})
                             
