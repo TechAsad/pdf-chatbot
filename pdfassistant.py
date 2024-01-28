@@ -160,7 +160,7 @@ def main():
                     st.success(f'File Embedded: {file.name}', icon="✅")
                 db = processing_csv_pdf_docx(uploaded_file)
             else:
-                uploaded_file_test = "test.pdf"
+                uploaded_file_test = ["test.pdf", "test2.pdf"]
                 processing_csv_pdf_docx(uploaded_file_test)
             db =processing_csv_pdf_docx(uploaded_file_test)
         
