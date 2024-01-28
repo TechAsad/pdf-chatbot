@@ -142,6 +142,7 @@ if not uploaded_file:
     st.warning("Upload your file(s) to start chatting!")
     
 
+
 if 'history' not in st.session_state:  
         st.session_state['history'] = []
 
@@ -151,18 +152,22 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state['history']  = []
 
 
+########--Save PDF--########
+    
+def load_files():
+    for file in uploaded_file:
+        with open(os.path.join('./uploaded_files', file.name), 'wb') as f:
+            f.write(file.getbuffer())
+
+
 def main():
    # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
-                processing_csv_pdf_docx(uploaded_file)
-                for file in uploaded_file:
-                    st.success(f'File Embedded: {file.name}', icon="✅")
-                db = processing_csv_pdf_docx(uploaded_file)
-            else:
-                uploaded_file_test = ["test.pdf", "test2.pdf"]
-                processing_csv_pdf_docx(uploaded_file_test)
-            db =processing_csv_pdf_docx(uploaded_file_test)
+                load_files()
+            db = processing_csv_pdf_docx(uploaded_file)
+            for file in uploaded_file:
+                st.success(f'File Embedded: {file.name}', icon="✅")
         
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])      
@@ -254,12 +259,18 @@ def main():
                     else:
                         with st.spinner('Bot is typing ...'):
                             #docs = VectorSearchTools.dbsearch(prompt)
+                            if uploaded_file:
+                                docs = db.similarity_search(prompt, k=5, fetch_k= 10)
+                                response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
+                                st.session_state.messages.append({"role": "Assistant", "content": response})
+                                    
+                                assistant_message = {"role": "assistant", "content": response}
+                            else:
+                                response = llm.invoke(prompt, kwargs= {"chat_history": memory})
+                                st.session_state.messages.append({"role": "Assistant", "content": response})
+                                    
+                                assistant_message = {"role": "assistant", "content": response}
                            
-                            docs = "page_content= Context not provide, answer the question from your knowledge"
-                            response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
-                            
-                            assistant_message = {"role": "assistant", "content": response}
                         
                                             
                             st.write(response)
