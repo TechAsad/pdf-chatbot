@@ -16,10 +16,10 @@ class VectorSearchTools():
         embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={'device': 'cpu'})
-        db = FAISS.load_local("faiss", embeddings)
+       # db = FAISS.load_local("faiss", embeddings)
         
-        retrieved_docs = db.similarity_search(query, k=5)
+        #retrieved_docs = db.similarity_search(query, k=5)
 
 
 
-        return retrieved_docs
+        #return retrieved_docs
