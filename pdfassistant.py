@@ -259,13 +259,15 @@ def main():
                                     
                                 assistant_message = {"role": "assistant", "content": response}
                             else:
-                                template = """You are a nice chatbot having a conversation with a human.
+                                template =dedent(r"""
+                                You are a nice chatbot having a conversation with a human.
 
                                 Previous conversation:
                                 {chat_history}
 
                                 New human question: {question}
-                                Response:"""
+                                Response:
+                                """)
                                 prompt = PromptTemplate.from_template(template)
                                 # Notice that we need to align the `memory_key`
                                 
