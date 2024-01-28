@@ -270,7 +270,7 @@ def main():
                     else:
                         with st.spinner('Bot is typing ...'):
                                             
-                            response =llm.invoke(prompt)
+                            response =llm.invoke(prompt).content
                             st.session_state.messages.append({"role": "Assistant", "content": response})
                                 
                             assistant_message = {"role": "assistant", "content": response}
@@ -278,7 +278,7 @@ def main():
                             
                         
                                             
-                            st.write(assistant_message["content"])
+                            st.write(response)
                             
     #except Exception as e:
     #    "Sorry, there was a problem. A corrupted file or;"
