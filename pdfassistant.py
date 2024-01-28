@@ -119,16 +119,16 @@ def processing_csv_pdf_docx(uploaded_file):
                     data += text_splitter.split_documents(documents)
                 
 
-        # Download embeddings from GooglePalm
-        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-        #embeddings = GooglePalmEmbeddings()
-        #embeddings = OpenAIEmbeddings()
+                # Download embeddings from GooglePalm
+                embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+                #embeddings = GooglePalmEmbeddings()
+                #embeddings = OpenAIEmbeddings()
 
-        # Create a FAISS index from texts and embeddings
+                # Create a FAISS index from texts and embeddings
 
-        vectorstore = FAISS.from_documents(data, embeddings)
-        #vectorstore.save_local("./faiss")
-        return vectorstore
+                vectorstore = FAISS.from_documents(data, embeddings)
+                #vectorstore.save_local("./faiss")
+                return vectorstore
 
 
 
