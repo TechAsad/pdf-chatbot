@@ -282,7 +282,7 @@ def main():
                             # Notice that we `return_messages=True` to fit into the MessagesPlaceholder
                             # Notice that `"chat_history"` aligns with the MessagesPlaceholder name.
                             memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-                            conversation = LLMChain(
+                            response = LLMChain(
                                 llm=llm,
                                 prompt=prompt,
                                 verbose=True,
