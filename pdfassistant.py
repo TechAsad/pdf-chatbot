@@ -39,7 +39,7 @@ st.sidebar.title('Options')
 
 
 st.sidebar.subheader("Please Choose the AI Engine")
-use_google = st.sidebar.checkbox("Use Free AI")
+use_google = st.sidebar.checkbox("Use Free AI", value =True)
 use_openai = st.sidebar.checkbox("Use OpenAI with your API Key")
 
 openai_api_key = st.sidebar.text_input("Enter your OpenAI API Key:", type="password")
