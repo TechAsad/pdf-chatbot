@@ -144,7 +144,7 @@ with st.sidebar:
 if not uploaded_file:
     st.warning("Upload your file(s) to start chatting!")
     
-st.sidebar.subheader('Build by Engr. Muhammad Asadullah')
+
 
 if 'history' not in st.session_state:  
         st.session_state['history'] = []
@@ -154,7 +154,7 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state["messages"]= []
     
     
-
+st.sidebar.subheader('Build by Engr. Muhammad Asadullah')
 
 ########--Save PDF--########
     
