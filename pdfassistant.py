@@ -19,7 +19,9 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.agents import load_tools
 import os
-
+from io import BytesIO
+from langdetect import detect
+from gtts import gTTS
 from langchain.prompts import (
     ChatPromptTemplate
 )
@@ -148,7 +150,8 @@ if 'history' not in st.session_state:
 
 if "messages" not in st.session_state or st.sidebar.button("Clear conversation history"):
     st.session_state["messages"]= []
-    st.session_state['history']  = []
+    
+    
 
 
 ########--Save PDF--########
@@ -164,7 +167,12 @@ def main():
                     st.success(f'Your File: {file.name} is Embedded', icon="✅")
             
             for msg in st.session_state.messages:
-                st.chat_message(msg["role"]).write(msg["content"])      
+                st.chat_message(msg["role"]).write(msg["content"])
+                if msg["role"] == "Assistant":
+                    
+                    st.chat_message(msg["role"]).audio(msg["audio_content"], format='audio/mp3') 
+                    #st.audio(audio_msg, format='audio/mp3').audio(audio_msg)
+    
             
             if prompt := st.chat_input(placeholder="Type your question!"):
                 st.session_state.messages.append({"role": "user", "content": prompt})
@@ -220,7 +228,8 @@ def main():
                 {chat_history}
                 ---------
 
-                Question: {question}
+                Question: 
+                {question}
 
                 Helpful Answer: 
                 """)
@@ -240,41 +249,72 @@ def main():
                     
                 #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
 
-                with st.chat_message("assistant"):
+                with st.chat_message("Assistant"):
                     st_cb = StreamlitCallbackHandler(st.container())
                     if prompt.lower() in greetings:
                         response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
-                        st.session_state.messages.append({"role": "Assistant", "content": response})
+                        
+                        
+                        audio_buffer = BytesIO()
+                        audio_file = gTTS(text=response, lang='en', slow=False)
+                        audio_file.write_to_fp(audio_buffer)
+                        audio_buffer.seek(0)
+                        #st.audio(audio_buffer, format='audio/mp3')
+                        st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                         
                     elif prompt.lower() in compliment:
                         response = 'My pleasure! If you have any more questions, feel free to ask.'
-                        st.session_state.messages.append({"role": "Assistant", "content": response})
+                        
+                        
+                        audio_buffer = BytesIO()
+                        audio_file = gTTS(text=response, lang='en', slow=False)
+                        audio_file.write_to_fp(audio_buffer)
+                        audio_buffer.seek(0)
+                        #st.audio(audio_buffer, format='audio/mp3')
+                        st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                         
                     elif uploaded_file:
                         with st.spinner('Bot is typing ...'):
-                            #docs = VectorSearchTools.dbsearch(prompt)
-                            docs = db.similarity_search(prompt, k=5, fetch_k= 10)
-                            response = chain.run(input_documents=docs, question = prompt)#, callbacks=[st_cb])
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
+                            docs = db.similarity_search(prompt, k=5, fetch_k=10)
+                            response = chain.run(input_documents=docs, question=prompt)
                             
+                            
+                            lang = detect(response)
+                            
+                            audio_buffer = BytesIO()
+                            audio_file = gTTS(text=response, lang=lang, slow=False)
+                            audio_file.write_to_fp(audio_buffer)
+                            audio_buffer.seek(0)
+                           # st.audio(audio_buffer, format='audio/mp3')
+                            #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
+                            st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
+                           
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
                             prompt_chat = ChatPromptTemplate.from_template("you are a helpful assistant. current conversation: {chat_history}. Question: {question}")
-                            
                             chain = prompt_chat | llm
-                                                                        
-                            response =chain.invoke({"chat_history": memory, "question": prompt}).content
-                            st.session_state.messages.append({"role": "Assistant", "content": response})
-                                
-                            assistant_message = {"role": "assistant", "content": response}
-
+                            response = chain.invoke({"chat_history": memory, "question": prompt}).content
                             
-                        
+                            
+                            lang = detect(response)
+                            
+                            audio_buffer = BytesIO()
+                            audio_file = gTTS(text=response, lang=lang, slow=False)
+                            audio_file.write_to_fp(audio_buffer)
+                            audio_buffer.seek(0)
+                            #st.audio(audio_buffer, format='audio/mp3')
+                            #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
+                            st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
+                            
+                            assistant_message = {"role": "assistant", "content": response}
                                             
-                    st.write(response)
+                    st.write(response)             
+                    st.audio(audio_buffer, format='audio/mp3')                        
+                    
                             
     except Exception as e:
+        
         "Sorry, there was a problem. A corrupted file or;"
         if use_google:
             "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
