@@ -70,6 +70,8 @@ if llm:
 else:
     st.sidebar.warning("Please choose an AI engine.")
 
+st.sidebar.subheader('Build by Engr. Muhammad Asadullah')
+
 @st.cache_resource(show_spinner=False)
 def processing_csv_pdf_docx(uploaded_file):
     with st.spinner(text="Embedding Your Files"):
