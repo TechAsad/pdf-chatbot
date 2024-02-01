@@ -154,8 +154,13 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state["messages"]= []
     
     
-st.sidebar.subheader('Build by Engr. Muhammad Asadullah')
+st.sidebar.subheader('Created by Engr. Muhammad Asadullah')
 
+# Adding links to social accounts
+st.sidebar.markdown("[LinkedIn](https://www.linkedin.com/in/asad18/)")
+st.sidebar.markdown("[GitHub](https://github.com/TechAsad)")
+st.sidebar.markdown("[Fiverr](https://www.fiverr.com/promptengr?source=gig_page&gigs=slug%3Acreate-streamlit-and-gradio-web-apps-for-ai-and-data-analysis%2Cpckg_id%3A1&is_choice=true)")
+st.sidebar.markdown("[Website](https://tenlancer.com/)")
 ########--Save PDF--########
     
 
