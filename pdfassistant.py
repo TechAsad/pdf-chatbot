@@ -3,6 +3,7 @@ from PyPDF2 import PdfReader
 import langchain
 from textwrap import dedent
 import pandas as pd
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.callbacks import StreamlitCallbackHandler
 from langchain_openai import ChatOpenAI
 from langchain_community.chat_models import ChatGooglePalm
@@ -299,7 +300,7 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                     else:
                         with st.spinner('Bot is typing ...'):
-                            prompt_chat = ChatPromptTemplate.from_template("you are a helpful assistant. current conversation: {chat_history}. Question: {question}")
+                            prompt_chat = ChatPromptTemplate.from_template("you are a helpful assistant, Answer the question with your knowledge.\n\n current conversation: {chat_history} \n\n Question: {question} \n\n Answer:")
                             chain = prompt_chat | llm
                             response = chain.invoke({"chat_history": memory, "question": prompt}).content
                             
