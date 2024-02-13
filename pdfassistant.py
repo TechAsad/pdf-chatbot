@@ -3,7 +3,7 @@ from PyPDF2 import PdfReader
 import langchain
 from textwrap import dedent
 import pandas as pd
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.callbacks import StreamlitCallbackHandler
 from langchain_openai import ChatOpenAI
 from langchain_community.chat_models import ChatGooglePalm
@@ -29,15 +29,9 @@ from langchain.prompts import (
 
 
 
-def get_key():
-    try:
-        google_api_key = st.secrets["GOOGLE_API_KEY"]
-        return google_api_key
-    except Exception as e:
-        google_api_key = os.environ.get("GOOGLE_API_KEY")
-        return google_api_key
-        
-google_api_key = get_key()
+
+
+google_api_key = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = google_api_key
 
@@ -182,9 +176,9 @@ def main():
             
             for msg in st.session_state.messages:
                 st.chat_message(msg["role"]).write(msg["content"])
-                #if msg["role"] == "Assistant":
+                if msg["role"] == "Assistant":
                     
-                    #st.chat_message(msg["role"]).audio(msg["audio_content"], format='audio/wav') 
+                    st.chat_message(msg["role"]).audio(msg["audio_content"], format='audio/wav') 
                     #st.audio(audio_msg, format='audio/mp3').audio(audio_msg)
     
             
@@ -224,11 +218,12 @@ def main():
                 compliment = ['thank you', 'thanks', 'thanks a lot', 'thanks a bunch', 'great', 'ok', 'ok thanks', 'okay', 'great', 'awesome', 'nice']
                             
                 prompt_template =dedent(r"""
-                You are a helpful assistant to help user find information from the olympics documents. which will be held in paris this summer.
+                You are a helpful assistant to help user find information from his documents.
                 talk humbly. Answer the question from the provided context. Do not answer from your own training data.
                 Use the following pieces of context to answer the question at the end.
                 If you don't know the answer, just say that you don't know. Do not makeup any answer.
-                
+                Do not answer hypothetically. Do not answer in more than 100 words.
+                Please Do Not say: "Based on the provided context"
                 Always use the context to find the answer.
                 
                 this is the context from study material:
@@ -288,19 +283,19 @@ def main():
                         
                     elif uploaded_file:
                         with st.spinner('Bot is typing ...'):
-                            docs = db.similarity_search(prompt, k=7, fetch_k=20)
+                            docs = db.similarity_search(prompt, k=5, fetch_k=10)
                             response = chain.run(input_documents=docs, question=prompt)
                             
                             
                             lang = detect(response)
                             
-                            #audio_buffer = BytesIO()
-                            #audio_file = gTTS(text=response, lang=lang, slow=False)
-                            #audio_file.write_to_fp(audio_buffer)
-                            #audio_buffer.seek(0)
+                            audio_buffer = BytesIO()
+                            audio_file = gTTS(text=response, lang=lang, slow=False)
+                            audio_file.write_to_fp(audio_buffer)
+                            audio_buffer.seek(0)
                            # st.audio(audio_buffer, format='audio/mp3')
                             #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
-                            #st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
+                            st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                            
                             assistant_message = {"role": "assistant", "content": response}
                     else:
@@ -310,20 +305,20 @@ def main():
                             response = chain.invoke({"chat_history": memory, "question": prompt}).content
                             
                             
-                            #lang = detect(response)
+                            lang = detect(response)
                             
-                            #audio_buffer = BytesIO()
-                            #audio_file = gTTS(text=response, lang=lang, slow=False)
-                            #audio_file.write_to_fp(audio_buffer)
-                            #audio_buffer.seek(0)
+                            audio_buffer = BytesIO()
+                            audio_file = gTTS(text=response, lang=lang, slow=False)
+                            audio_file.write_to_fp(audio_buffer)
+                            audio_buffer.seek(0)
                             #st.audio(audio_buffer, format='audio/mp3')
                             #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
-                            #st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
+                            st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                             
                             assistant_message = {"role": "assistant", "content": response}
                                             
                     st.write(response)             
-                    #st.audio(audio_buffer, format='audio/wav')                        
+                    st.audio(audio_buffer, format='audio/wav')                        
                     
                             
     except Exception as e:
