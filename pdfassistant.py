@@ -165,6 +165,13 @@ st.sidebar.markdown("[Website](https://tenlancer.com/)")
 ########--Save PDF--########
     
 
+def text_to_audio(response, lang):
+    audio_buffer = BytesIO()
+    audio_file = gTTS(text=response, lang=lang, slow=False)
+    audio_file.write_to_fp(audio_buffer)
+    audio_buffer.seek(0)
+    return audio_buffer
+
 
 def main():
     try:
@@ -263,10 +270,11 @@ def main():
                         response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
                         
                         
-                        audio_buffer = BytesIO()
-                        audio_file = gTTS(text=response, lang='en', slow=False)
-                        audio_file.write_to_fp(audio_buffer)
-                        audio_buffer.seek(0)
+                        lang = "en"
+                            
+                            
+                            
+                        audio_buffer = text_to_audio(response, lang)
                         #st.audio(audio_buffer, format='audio/mp3')
                         st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                         
@@ -274,10 +282,11 @@ def main():
                         response = 'My pleasure! If you have any more questions, feel free to ask.'
                         
                         
-                        audio_buffer = BytesIO()
-                        audio_file = gTTS(text=response, lang='en', slow=False)
-                        audio_file.write_to_fp(audio_buffer)
-                        audio_buffer.seek(0)
+                        lang = "en"
+                            
+                            
+                            
+                        audio_buffer = text_to_audio(response, lang)
                         #st.audio(audio_buffer, format='audio/mp3')
                         st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
                         
@@ -289,10 +298,9 @@ def main():
                             
                             lang = detect(response)
                             
-                            audio_buffer = BytesIO()
-                            audio_file = gTTS(text=response, lang=lang, slow=False)
-                            audio_file.write_to_fp(audio_buffer)
-                            audio_buffer.seek(0)
+                            
+                            
+                            audio_buffer = text_to_audio(response, lang)
                            # st.audio(audio_buffer, format='audio/mp3')
                             #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
                             st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
@@ -307,10 +315,9 @@ def main():
                             
                             lang = detect(response)
                             
-                            audio_buffer = BytesIO()
-                            audio_file = gTTS(text=response, lang=lang, slow=False)
-                            audio_file.write_to_fp(audio_buffer)
-                            audio_buffer.seek(0)
+                            
+                            
+                            audio_buffer = text_to_audio(response, lang)
                             #st.audio(audio_buffer, format='audio/mp3')
                             #st.session_state.audio.append({"role": "Assistant", "audio": audio_buffer})
                             st.session_state.messages.append({"role": "Assistant", "content": response, "audio_content": audio_buffer})
