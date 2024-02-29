@@ -183,10 +183,10 @@ def main():
             
             for msg in st.session_state.messages:
                 if msg["role"] == "user":
-                    st.chat_message(msg["role"], avatar="user.png").write(msg["content"])
+                    st.chat_message("user", avatar="user.png").write(msg["content"])
                 
                 if msg["role"] == "Assistant":
-                    st.chat_message(msg["role"], avatar="logo.png").write(msg["content"])
+                    st.chat_message("Assistant", avatar="logo.png").write(msg["content"])
                     
                     st.audio(msg["audio_content"], format='audio/wav') 
                     #st.audio(audio_msg, format='audio/mp3').audio(audio_msg)
