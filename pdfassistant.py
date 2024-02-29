@@ -185,7 +185,7 @@ def main():
                 st.chat_message(msg["role"]).write(msg["content"])
                 if msg["role"] == "Assistant":
                     
-                    st.chat_message(msg["role"]).audio(msg["audio_content"], format='audio/wav') 
+                    st.audio(msg["audio_content"], format='audio/wav') 
                     #st.audio(audio_msg, format='audio/mp3').audio(audio_msg)
     
             
@@ -325,7 +325,7 @@ def main():
                             assistant_message = {"role": "assistant", "content": response}
                                             
                     st.write(response)             
-                    st.audio(audio_buffer, format='audio/wav')                        
+                st.audio(audio_buffer, format='audio/wav')                        
                     
                             
     except Exception as e:
