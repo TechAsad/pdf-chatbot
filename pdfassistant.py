@@ -174,7 +174,7 @@ def text_to_audio(response, lang):
 
 
 def main():
-    try:
+   # try:
         if (use_openai and openai_api_key) or use_google:
             if uploaded_file:
                 db = processing_csv_pdf_docx(uploaded_file)
@@ -331,13 +331,13 @@ def main():
                 st.audio(audio_buffer, format='audio/wav')                        
                     
                             
-    except Exception as e:
+    #except Exception as e:
         
-        "Sorry, there was a problem. A corrupted file or;"
-        if use_google:
-            "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
-        elif use_openai:
-            "Please check your OpenAI API key"
+     #   "Sorry, there was a problem. A corrupted file or;"
+      #  if use_google:
+       #     "Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document."
+        #elif use_openai:
+         #   "Please check your OpenAI API key"
          
 
 
