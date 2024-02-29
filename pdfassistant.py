@@ -192,7 +192,7 @@ def main():
             if prompt := st.chat_input(placeholder="Type your question!"):
                 st.session_state.messages.append({"role": "user", "content": prompt})
                 st.chat_message("user").write(prompt)
-                memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "", ai_prefix= "")
+                memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "User", ai_prefix= "Assistant")
                 user_message = {"role": "user", "content": prompt}
                 
                 
@@ -201,15 +201,15 @@ def main():
                         user_prompt = st.session_state.messages[i]
                         ai_res = st.session_state.messages[i + 1]
                         
-                        current_role = user_prompt["role"]
+                        
                         current_content = user_prompt["content"]
                         
-                        next_role = ai_res["role"]
+                        
                         next_content = ai_res["content"]
                         
                         # Concatenate role and content for context and output
-                        user = f"{current_role}: {current_content}"
-                        ai = f"{next_role}: {next_content}"
+                        user = f" {current_content}"
+                        ai = f" {next_content}"
                         
                         memory.save_context({"question": user}, {"output": ai})
 
@@ -225,15 +225,15 @@ def main():
                 compliment = ['thank you', 'thanks', 'thanks a lot', 'thanks a bunch', 'great', 'ok', 'ok thanks', 'okay', 'great', 'awesome', 'nice']
                             
                 prompt_template =dedent(r"""
-                You are a helpful assistant to help user find information from his documents.
+                You are a helpful assistant.
                 talk humbly. Answer the question from the provided context. Do not answer from your own training data.
                 Use the following pieces of context to answer the question at the end.
                 If you don't know the answer, just say that you don't know. Do not makeup any answer.
                 Do not answer hypothetically. Do not answer in more than 100 words.
                 Please Do Not say: "Based on the provided context"
-                Always use the context to find the answer.
                 
-                this is the context from study material:
+                
+                this is the context:
                 ---------
                 {context}
                 ---------
