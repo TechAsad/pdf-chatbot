@@ -182,8 +182,11 @@ def main():
                     st.success(f'Your File: {file.name} is Embedded', icon="✅")
             
             for msg in st.session_state.messages:
-                st.chat_message(msg["role"]).write(msg["content"])
+                if msg["role"] == "user":
+                    st.chat_message(msg["role"], avatar="user.png").write(msg["content"])
+                
                 if msg["role"] == "Assistant":
+                    st.chat_message(msg["role"], avatar="logo.png").write(msg["content"])
                     
                     st.audio(msg["audio_content"], format='audio/wav') 
                     #st.audio(audio_msg, format='audio/mp3').audio(audio_msg)
@@ -191,7 +194,7 @@ def main():
             
             if prompt := st.chat_input(placeholder="Type your question!"):
                 st.session_state.messages.append({"role": "user", "content": prompt})
-                st.chat_message("user").write(prompt)
+                st.chat_message("user", avatar="user.png").write(prompt)
                 memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", human_prefix= "User", ai_prefix= "Assistant")
                 user_message = {"role": "user", "content": prompt}
                 
@@ -264,7 +267,7 @@ def main():
                     
                 #chain = load_qa_chain(ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo-0613", streaming=True) , verbose= True, prompt = PROMPT, memory=memory,chain_type="stuff")
 
-                with st.chat_message("Assistant"):
+                with st.chat_message("Assistant",  avatar="logo.png"):
                     st_cb = StreamlitCallbackHandler(st.container())
                     if prompt.lower() in greetings:
                         response = 'Hi, how are you? I am here to help you get information from your file. How can I assist you?'
