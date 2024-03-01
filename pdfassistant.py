@@ -55,9 +55,9 @@ st.markdown(
 
 
 
-st.image("tenlancer.png", width=100)
+st.image("tenlancer.png", width=80)
 
-st.markdown("<h1 style='text-align: center; color: white;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: white;'> Knowledge Query Assistant </h3>", unsafe_allow_html=True)
 
 
 
