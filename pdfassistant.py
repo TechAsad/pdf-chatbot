@@ -33,11 +33,6 @@ from langchain.prompts import (
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
 
 
-st.markdown("<h1 style='text-align: center; color: black;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
-
-
-st.markdown("<h5 style='text-align: center; color: black;'> Upload your file to begin a chat, or ask any general questions you have </h5>", unsafe_allow_html=True)
-
 
 
 st.markdown(
@@ -61,6 +56,8 @@ st.markdown(
 
 
 st.image("tenlancer.png", width=100)
+
+st.markdown("<h1 style='text-align: center; color: black;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
 
 
 
