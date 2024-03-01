@@ -31,6 +31,68 @@ from langchain.prompts import (
 
 
 
+
+st.markdown(
+    """
+    <style>
+        [data-testid=stImage]{
+            text-align: center;
+            display: block;
+            margin-left: 10%;
+            margin-right:10%;
+            width: 100%;
+    }
+    img {
+        border-radius: 50%;
+        align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+
+
+st.image("tenlancer.png", width=100)
+
+
+st.markdown("<h5 style='text-align: center; color: black;'>I specialize in providing required information from your documents </h5>", unsafe_allow_html=True)
+
+
+# Displaying the logo image with a caption 'JOY' and setting the width to 150 pixels
+
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stsubheader"] p{
+        font-size: 1.2rem;
+        color: #000000
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+if 'history' not in st.session_state:  
+        st.session_state['history'] = []
+
+
+if "messages" not in st.session_state or st.sidebar.button("Clear conversation history"):
+    st.session_state["messages"]= []
+
+
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stChatMessageContent"] p{
+        font-size: 1.2rem;
+        color: #404040
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+
 google_api_key = st.secrets["GOOGLE_API_KEY"]
 #api_key2 = st.secrets["OPENAI_API_KEY"]
 os.environ["GOOGLE_API_KEY"] = google_api_key
