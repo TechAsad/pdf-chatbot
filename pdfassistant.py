@@ -31,8 +31,12 @@ from langchain.prompts import (
 
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
-st.header('Knowledge Query Assistant')
 
+
+st.markdown("<h1 style='text-align: center; color: black;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
+
+
+st.markdown("<h5 style='text-align: center; color: black;'> Upload your file to begin a chat, or ask any general questions you have </h5>", unsafe_allow_html=True)
 
 
 
@@ -58,8 +62,6 @@ st.markdown(
 
 st.image("tenlancer.png", width=100)
 
-
-st.markdown("<h5 style='text-align: center; color: black;'> Upload your file to begin a chat, or ask any general questions you have </h5>", unsafe_allow_html=True)
 
 
 # Displaying the logo image with a caption 'JOY' and setting the width to 150 pixels
@@ -103,6 +105,7 @@ os.environ["GOOGLE_API_KEY"] = google_api_key
 
 
 
+st.sidebar.header("options")
 st.sidebar.subheader("Please Choose the AI Engine")
 use_google = st.sidebar.checkbox("Use Free AI", value =True)
 use_openai = st.sidebar.checkbox("Use OpenAI with your API Key")
