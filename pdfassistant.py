@@ -57,30 +57,8 @@ st.markdown(
 
 st.image("tenlancer.png", width=100)
 
-st.markdown("<h1 style='text-align: center; color: black;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: white;'> Knowledge Query Assistant </h1>", unsafe_allow_html=True)
 
-
-
-# Displaying the logo image with a caption 'JOY' and setting the width to 150 pixels
-
-
-st.markdown(
-    """
-    <style>
-    [data-testid="stsubheader"] p{
-        font-size: 1.2rem;
-        color: #000000
-    }
-    </style>
-    """, unsafe_allow_html=True
-)
-
-if 'history' not in st.session_state:  
-        st.session_state['history'] = []
-
-
-if "messages" not in st.session_state or st.sidebar.button("Clear conversation history"):
-    st.session_state["messages"]= []
 
 
 
