@@ -38,7 +38,7 @@ st.markdown("""
 
 .block-container
 {
-    padding-top: 0rem;
+    padding-top: 0.1rem;
     padding-bottom: 0rem;
     margin-top: 0rem;
 }
