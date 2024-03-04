@@ -46,6 +46,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown(
+    """
+    <style>
+    [data-testid="stChatMessageContent"] p{
+        font-size: 0.9rem;
+        color: #404040
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 
 
 st.markdown(
