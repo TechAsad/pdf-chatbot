@@ -32,30 +32,6 @@ from langchain.prompts import (
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
 
-# Reducing whitespace on the top of the page
-st.markdown("""
-<style>
-
-.block-container
-{
-    padding-top: 0.1rem;
-    padding-bottom: 0rem;
-    margin-top: 0.7rem;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown(
-    """
-    <style>
-    [data-testid="stChatMessageContent"] p{
-        font-size: 0.6rem;
-        color: #404040
-    }
-    </style>
-    """, unsafe_allow_html=True
-)
 
 
 st.markdown(
