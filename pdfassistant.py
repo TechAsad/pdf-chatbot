@@ -372,11 +372,12 @@ def main():
                             
     except Exception as e:
         
-        st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. A corrupted file or;")
         if use_google:
-            st.chat_message("Assistant",  avatar="logo.png").write("Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document.")
+            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Google PaLM AI only take English Data and Questions. Or the AI could not find the answer in your provided document.")
         elif use_openai:
-            "Please check your OpenAI API key"
+            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Please check your OpenAI API key.")
+        
+            
          
 
 
