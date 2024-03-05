@@ -65,7 +65,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] p{
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         color: #f0f0f0
     }
     </style>
