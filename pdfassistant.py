@@ -268,7 +268,7 @@ def main():
                             
                 prompt_template =dedent(r"""
                 You are a helpful assistant.
-                talk humbly. Answer the question from the provided context. Do not answer from your own training data.
+                talk humbly. Answer the question from the provided context only. Do not answer from your own training data.
                 Use the following pieces of context to answer the question at the end.
                 If you don't know the answer, just say that you don't know. Do not makeup any answer.
                 Do not answer hypothetically. Do not answer in more than 100 words.
@@ -334,7 +334,7 @@ def main():
                         
                     elif uploaded_file:
                         with st.spinner('Bot is typing ...'):
-                            docs = db.similarity_search(prompt, k=5, fetch_k=10)
+                            docs = db.similarity_search(prompt, k=5, fetch_k=20)
                             response = chain.run(input_documents=docs, question=prompt)
                             
                             
