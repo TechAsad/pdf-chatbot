@@ -54,7 +54,7 @@ st.markdown(
 
 
 
-st.image("tenlancer.png", width=80)
+#st.image("tenlancer.png", width=80)
 
 st.markdown("<h3 style='text-align: center; color: white;'> Syllabus Aid </h3>", unsafe_allow_html=True)
 
