@@ -56,7 +56,7 @@ st.markdown(
 
 st.image("tenlancer.png", width=80)
 
-st.markdown("<h3 style='text-align: center; color: white;'> Knowledge Query Assistant </h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: white;'> Syllabus Aid </h3>", unsafe_allow_html=True)
 
 
 
@@ -79,9 +79,9 @@ os.environ["GOOGLE_API_KEY"] = google_api_key
 
 
 
-st.sidebar.header("options")
-st.sidebar.subheader("Please Choose the AI Engine")
-use_google = st.sidebar.checkbox("Use Free AI", value =True)
+st.sidebar.header("Options")
+st.sidebar.subheader("Please Choose the LLM")
+use_google = st.sidebar.checkbox("Use Google Gemeni LLM", value =True)
 use_openai = st.sidebar.checkbox("Use OpenAI with your API Key")
 
 openai_api_key = st.sidebar.text_input("Enter your OpenAI API Key:", type="password")
@@ -106,9 +106,9 @@ def choose_llm():
 llm = choose_llm()
 
 if llm:
-    st.sidebar.success("AI Engine selected")
+    st.sidebar.success("LLM selected")
 else:
-    st.sidebar.warning("Please choose an AI engine.")
+    st.sidebar.warning("Please choose an LLM.")
 
 
 
@@ -194,7 +194,7 @@ if "messages" not in st.session_state or st.sidebar.button("Clear conversation h
     st.session_state["messages"]= []
     
     
-st.sidebar.subheader('Created by Engr. Muhammad Asadullah')
+#st.sidebar.subheader('Created by Engr. Muhammad Asadullah')
 
 # Adding links to social accounts
 #st.sidebar.markdown("[LinkedIn](https://www.linkedin.com/in/asad18/)")
