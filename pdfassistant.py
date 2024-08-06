@@ -75,7 +75,7 @@ st.markdown(
 
 def get_api_key():
     
-    return st.secrets("GOOGLE_API_KEY")
+    return st.secrets["GOOGLE_API_KEY"]
 
 google_api_key = get_api_key()
 os.environ["GOOGLE_API_KEY"] = google_api_key
