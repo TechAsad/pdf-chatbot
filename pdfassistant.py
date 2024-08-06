@@ -175,7 +175,7 @@ def processing_csv_pdf_docx(uploaded_file):
 with st.sidebar:
     uploaded_file =  st.file_uploader("Upload your files",
     help="Multiple Files are Supported",
-    type=['pdf', 'docx', 'csv'], accept_multiple_files= True)
+    type=['pdf'], accept_multiple_files= True)
 
 
 if not uploaded_file:
