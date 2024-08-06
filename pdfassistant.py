@@ -27,7 +27,8 @@ from langchain.prompts import (
     ChatPromptTemplate
 )
 
-
+from dotenv import load_dotenv
+load_dotenv()
 
 
 st.set_page_config(page_title='Personal Chatbot', page_icon='books')
@@ -72,10 +73,15 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
+def get_api_key():
+    try:
+        return st.secrets["GOOGLE_API_KEY"]
+    except KeyError:
+        return os.getenv("GOOGLE_API_KEY")
 
-google_api_key = st.secrets["GOOGLE_API_KEY"]
-#api_key2 = st.secrets["OPENAI_API_KEY"]
+google_api_key = get_api_key()
 os.environ["GOOGLE_API_KEY"] = google_api_key
+
 
 
 
