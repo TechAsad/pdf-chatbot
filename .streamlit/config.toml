@@ -1,7 +1,7 @@
 [theme]
 base="light"
-primaryColor="#c2d4dd"
-backgroundColor="#0F1035"
-secondaryBackgroundColor="#7077A1"
-textColor="#DCF2F1"
-font="sans serif"
+primaryColor="#4A90E2"  # A professional and modern blue
+backgroundColor="#1C1E26"  # A dark grey background for a sophisticated look
+secondaryBackgroundColor="#2B2D3A"  # A slightly lighter grey for subtle contrast
+textColor="#E5E5E5"  # Light grey text that is easy to read on a dark background
+font="sans serif"  # Keeping the font simple and clean

@@ -20,11 +20,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.agents import load_tools
 import os
 from io import BytesIO
-from langdetect import detect
-from gtts import gTTS
-from langchain.prompts import (
-    ChatPromptTemplate
-)
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -170,6 +166,37 @@ def processing_csv_pdf_docx(uploaded_file):
         #vectorstore.save_local("./faiss")
         return vectorstore
 
+def stand_alone(prompt, memory):
+    print("Generating Standalone Question")
+
+    prompt_chat = PromptTemplate(
+    template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> 
+
+    you are a helpful assistant, provide a standalone question based on conversation history and the new question.
+    do not deviate from the core meaning of the new question.
+    
+    Do not write any explanation.
+    
+    only provide the stand alone question with no preamble or explanation.
+   
+
+    <|eot_id|><|start_header_id|>user<|end_header_id|>
+    current conversation: {chat_history} \n\n 
+    Question: {question} \n\n 
+    STAND ALONE QUESTION:
+    <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+    """,
+    input_variables=[ "chat_history", "question"],
+    )
+
+
+    chain_simple = prompt_chat | llm | StrOutputParser()
+
+
+
+    #chain = prompt_chat | llm | 
+    response = chain_simple.invoke({"chat_history": memory.chat_memory, "question": prompt})
+    return response
 
 
 with st.sidebar:
@@ -201,21 +228,21 @@ st.sidebar.markdown("[LinkedIn](https://www.linkedin.com/in/asad18/)")
 ########--Save PDF--########
     
 
-def text_to_audio(response, lang):
-    audio_buffer = BytesIO()
-    audio_file = gTTS(text=response, lang=lang, slow=False)
-    audio_file.write_to_fp(audio_buffer)
-    audio_buffer.seek(0)
-    return audio_buffer
+#def text_to_audio(response, lang):
+ #   audio_buffer = BytesIO()
+  #  audio_file = gTTS(text=response, lang=lang, slow=False)
+   # audio_file.write_to_fp(audio_buffer)
+    #audio_buffer.seek(0)
+    #return audio_buffer
 
 
 def main():
-    try:
+    #try:
         
         if uploaded_file:
             db = processing_csv_pdf_docx(uploaded_file)
             for file in uploaded_file:
-                st.sidebar.success(f'Your File: {file.name} is Embedded', icon="✅")
+                st.sidebar.success(f'File: {file.name} is Embedded', icon="✅")
         
         for msg in st.session_state.messages:
             if msg["role"] == "user":
@@ -265,11 +292,9 @@ def main():
                         
             prompt_template =dedent(r"""
             You are a helpful assistant.
-            talk humbly. Answer the question from the provided context only. Do not answer from your own training data.
+            talk humbly. Answer the question from the provided context only. 
             Use the following pieces of context to answer the question at the end.
-            If you don't know the answer, just say that you don't know with appropriate reason. Do not makeup any answer.
-            Do not answer hypothetically. Do not answer in more than 100 words.
-            Please Do Not say: "Based on the provided context"
+           
             
             
             this is the context:
@@ -323,7 +348,18 @@ def main():
                     
                 elif uploaded_file:
                     with st.spinner('Bot is typing ...'):
-                        docs = db.similarity_search(prompt, k=5, fetch_k=20)
+                        
+                        
+                        #print(len(memory.chat_memory.messages))
+
+                        if len(memory.chat_memory.messages) > 1:
+                            stand_alone_question= stand_alone(prompt, memory)
+                            print(stand_alone_question)
+                            search_query = f" {stand_alone} \n {prompt}"
+                            docs = db.similarity_search(search_query, k=5, fetch_k=20)
+                        else:
+                            docs = db.similarity_search(prompt, k=5, fetch_k=20)
+                            
                         response = chain.run(input_documents=docs, question=prompt)
                         
                         
@@ -344,7 +380,7 @@ def main():
                         #prompt_chat = ChatPromptTemplate.from_template("you are a helpful assistant, Answer the question with your knowledge.\n\n current conversation: {chat_history} \n\n Question: {question} \n\n Answer:")
                         
                         prompt_chat = PromptTemplate(
-                        template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a reddit expert. you have been given some subreddits.
+                        template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> 
                         
                         you are a helpful assistant, Answer the question with your knowledge.
                         
@@ -376,12 +412,12 @@ def main():
                                           
                 
                             
-    except Exception as e:
+   # except Exception as e:
         
-        if llm_choice == "Use Google Gemini LLM":
-            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Google Gemini AI only take English Data and Questions. Or the LLM is inactive. Try using Openai")
-        elif llm_choice == "Use OpenAI with your API Key":
-            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Please check your OpenAI API key.")
+       # if llm_choice == "Use Google Gemini LLM":
+        #    st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Google Gemini AI only take English Data and Questions. Or the LLM is inactive. Try using Openai")
+        #elif llm_choice == "Use OpenAI with your API Key":
+         #   st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Please check your OpenAI API key.")
         
             
          
