@@ -237,7 +237,7 @@ st.sidebar.markdown("[LinkedIn](https://www.linkedin.com/in/asad18/)")
 
 
 def main():
-    #try:
+    try:
         
         if uploaded_file:
             db = processing_csv_pdf_docx(uploaded_file)
@@ -412,12 +412,12 @@ def main():
                                           
                 
                             
-   # except Exception as e:
+    except Exception as e:
         
-       # if llm_choice == "Use Google Gemini LLM":
-        #    st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Google Gemini AI only take English Data and Questions. Or the LLM is inactive. Try using Openai")
-        #elif llm_choice == "Use OpenAI with your API Key":
-         #   st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Please check your OpenAI API key.")
+        if llm_choice == "Use Google Gemini LLM":
+            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Google Gemini AI only take English Data and Questions. Or the LLM is inactive. Try using Openai")
+        elif llm_choice == "Use OpenAI with your API Key":
+            st.chat_message("Assistant",  avatar="logo.png").write("Sorry, there was a problem. Please check your OpenAI API key.")
         
             
          
