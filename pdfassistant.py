@@ -258,7 +258,7 @@ def main():
         if prompt := st.chat_input(placeholder="Type your question!"):
             st.session_state.messages.append({"role": "user", "content": prompt})
             st.chat_message("user", avatar="user.png").write(prompt)
-            memory = ConversationBufferWindowMemory(memory_key="chat_history", input_key="question", human_prefix= "User", ai_prefix= "Assistant", k=10)
+            memory = ConversationBufferWindowMemory(memory_key="chat_history", input_key="question", human_prefix= "User", ai_prefix= "Assistant", k=6)
             user_message = {"role": "user", "content": prompt}
             
             
